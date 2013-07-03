@@ -1,4 +1,3 @@
-
 // Video memory pointer - always constant
 unsigned short *vidmem = (unsigned short *) 0xB8000;
 
@@ -10,7 +9,7 @@ void kern_start(void)
 	char *str = "Hello world!", *ch;
 	unsigned i;
 	
-	for(ch = str; i = 0; *ch; ch++, i++)
+	for(ch = str, i = 0; *ch; ch++, i++)
 		vidmem[i] = (unsigned char) *ch | 0x0700;
 
 	for(;;) // Idle loop to stop system.
