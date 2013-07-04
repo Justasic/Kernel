@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/bash
 
 echo "===================================================================="
 echo "I will try to fetch and build everything needed for a freestanding"
@@ -26,11 +26,11 @@ if [ -z $LIBCXX_TRIPLE ]; then
     export LIBCXX_TRIPLE=-apple-
 fi
 
-BINUTILS_VER=2.23
-GCC_VER=4.8.1
-MPFR_VER=3.1.2
-MPC_VER=1.0
-GMP_VER=5.1.2
+BINUTILS_VER="2.23"
+GCC_VER="4.8.1"
+MPFR_VER="3.1.2"
+MPC_VER="1.0"
+GMP_VER="5.1.2"
 
 # END OF USER-ADJUSTABLE SETTINGS
 
@@ -50,7 +50,7 @@ echo "Fetching binutils $BINUTILS_VER..."
 echo "===================================================================="
 if [ ! -f ${SOURCE_PREFIX}/binutils-${BINUTILS_VER}.tar.bz2 ]; then
     echo "binutils"
-    curl http://ftp.gnu.org/gnu/binutils/binutils-${BINUTILS_VER}.tar.bz2 -o ${SOURCE_PREFIX}/binutils-${BINUTILS_VER}.tar.bz2
+    curl "http://ftp.gnu.org/gnu/binutils/binutils-${BINUTILS_VER}.tar.gz" -o "${SOURCE_PREFIX}/binutils-${BINUTILS_VER}.tar.gz"
 else
     echo "Not fetching binutils, file exists."
 fi
@@ -61,16 +61,9 @@ echo "===================================================================="
 
 if [ ! -f ${SOURCE_PREFIX}/gcc-core-${GCC_VER}.tar.bz2 ]; then
     echo "gcc-core"
-    curl http://ftp.gnu.org/gnu/gcc/gcc-${GCC_VER}/gcc-core-${GCC_VER}.tar.bz2 -o ${SOURCE_PREFIX}/gcc-core-${GCC_VER}.tar.bz2
+    curl http://ftp.gnu.org/gnu/gcc/gcc-${GCC_VER}/gcc-${GCC_VER}.tar.bz2 -o ${SOURCE_PREFIX}/gcc-core-${GCC_VER}.tar.bz2
 else
     echo "Not fetching gcc-core, file exists."
-fi
-
-if [ ! -f ${SOURCE_PREFIX}/gcc-g++-${GCC_VER}.tar.bz2 ]; then
-    echo "gcc-g++"
-    curl http://ftp.gnu.org/gnu/gcc/gcc-${GCC_VER}/gcc-g++-${GCC_VER}.tar.bz2 -o ${SOURCE_PREFIX}/gcc-g++-${GCC_VER}.tar.bz2
-else
-    echo "Not fetching gcc-g++, file exists."
 fi
 
 echo "===================================================================="
@@ -79,7 +72,7 @@ echo "===================================================================="
 
 if [ ! -f ${SOURCE_PREFIX}/mpfr-${MPFR_VER}.tar.bz2 ]; then
     echo "mpfr"
-    curl http://ftp.gnu.org/gnu/mpfr/mpfr-${MPFR_VER}.tar.bz2 -o ${SOURCE_PREFIX}/mpfr-${MPFR_VER}.tar.bz2
+    curl http://ftp.gnu.org/gnu/mpfr/mpfr-${MPFR_VER}.tar.gz -o ${SOURCE_PREFIX}/mpfr-${MPFR_VER}.tar.bz2
 else
     echo "Not fetching mpfr, file exists."
 fi
@@ -149,7 +142,7 @@ echo "Extracting binutils $BINUTILS_VER..."
 echo "===================================================================="
 
 if [ ! -d sources/binutils-${BINUTILS_VER} ]; then
-    tar xf ${SOURCE_PREFIX}/binutils-${BINUTILS_VER}.tar.bz2 -C sources
+    tar xf ${SOURCE_PREFIX}/binutils-${BINUTILS_VER}.tar.gz -C sources
 fi
 
 BINUTILS_VER=`echo $BINUTILS_VER | sed s/[a-z]//g`
@@ -348,7 +341,6 @@ echo "===================================================================="
 
 if [ ! -d sources/gcc-${GCC_VER} ]; then
     tar xf ${SOURCE_PREFIX}/gcc-core-${GCC_VER}.tar.bz2 -C sources
-    tar xf ${SOURCE_PREFIX}/gcc-g++-${GCC_VER}.tar.bz2 -C sources
 fi
 
 echo "===================================================================="

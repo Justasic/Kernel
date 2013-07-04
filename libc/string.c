@@ -31,11 +31,6 @@ int strcmp(const char *s1, const char *s2)
 	if (s1l - 1 > i) { return r; } else { return 0; }
 }
 
-int strcasecmp(const char *s1, const char *s2)
-{
-	return 0; // TODO: this.
-}
-
 char *strcat(char *dest, const char *src)
 {
 	if(!dest || !dest[0])
@@ -86,6 +81,13 @@ char *strtolower(char *dest, const char *src)
 	while(*src)
 		*dest++ = tolower(*str++);
 	return dest;
+}
+
+int strcasecmp(const char *s1, const char *s2)
+{
+	// Make a better version of this.
+	char str[(1<<16)];
+	return strcmp(strtolower(str, s1), strtolower(str, s2));
 }
 
 ////////////////////////////////////////////////////////////////////////////////
