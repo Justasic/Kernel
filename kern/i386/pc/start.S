@@ -37,7 +37,6 @@ stack_top:
 # bootloader will jump to this position once the kernel has been loaded. It
 # doesn't make sense to return from this function as the bootloader is gone.
 .section .text
-extern kern_start
 .global _bootstrap
 .type _bootstrap, @function
 _bootstrap:
@@ -52,14 +51,14 @@ _bootstrap:
 	# Jump to C! :D
 	call kern_start
 
-	# If kern_start exits, we're gonna wanna hang the CPU.
+	## If kern_start exits, we're gonna wanna hang the CPU.
 	# We can't poweroff the computer because that requires
 	# ACPI interface shit which I hear is really annoying
 	# to implement.
 	cli   # Clear all maskable interrupts - ignore all maskable interrupts basically
 	hlt   # Halt the CPU until the next NMI arrives
 
-# if the CPU still does not hang, do an endless jump loop, retrying the halt each time.
+	## if the CPU still does not hang, do an endless jump loop, retrying the halt each time.
 .sysHang:
 	hlt
 	jmp .sysHang

@@ -7,7 +7,7 @@ endif(${CMAKE_CURRENT_SOURCE_DIR} STREQUAL ${CMAKE_CURRENT_BINARY_DIR} AND NOT W
 
 
 project(Kernel C)
-enable_language(CXX ASM)
+enable_language(CXX ASM-ATT)
 
 # Cmake module path (if exists)
 set(CMAKE_MODULE_PATH ${CMAKE_SOURCE_DIR}/cmake)
@@ -42,16 +42,13 @@ include_directories(
 # Get all the files needed
 file(GLOB LIBC_SOURCES RELATIVE ${CMAKE_CURRENT_SOURCE_DIR} "kern/*.c")
 file(GLOB KERN_SOURCES RELATIVE ${CMAKE_CURRENT_SOURCE_DIR} "libc/*.c")
-file(GLOB ASM_SOURCES RELATIVE ${CMAKE_CURRENT_SOURCE_DIR} "*.[sS]")
-file(GLOB EVERYTHING_ELSE_SOURCES RELATIVE ${CMAKE_CURRENT_SOURCE_DIR} "*.c")
 
 # http://wiki.osdev.org/CMake_Build_System
 # This was very helpful in this build system
-LOAD_PROFILE("x86" "i585") # Generic for now
+LOAD_PROFILE("i386" "pc") # Generic for now
 
 # Concatenate and sort
-set(SOURCE_FILES ${LIBC_SOURCES} ${KERN_SOURCES} ${ASM_SOURCES}
-	${EVERYTHING_ELSE_SOURCES} ${ISA_SRCS} ${PLATFORM_SRCS})
+set(SOURCE_FILES ${LIBC_SOURCES} ${KERN_SOURCES} ${ISA_SRCS} ${PLATFORM_SRCS})
 list(SORT SOURCE_FILES)
 
 # Various options we need
@@ -64,8 +61,9 @@ if(${USE_GCC_TOOLCHAIN} STREQUAL "OFF" AND ${USE_LLVM_TOOLCHAIN} STREQUAL "OFF")
 endif(${USE_GCC_TOOLCHAIN} STREQUAL "OFF" AND ${USE_LLVM_TOOLCHAIN} STREQUAL "OFF")
 
 # these are any additional flags which should be added to the base compiles. Things like 32 bit or elf binaries
-set(CFLAGS "-m32")
+set(CFLAGS "${ISA_C_FLAGS} -T ${PLATFORM_LAYOUT} -N ${ISA_LINKER_FLAGS} ${PLATFORM_LINKER_FLAGS}")
 set(LINKFLAGS "-melf_i386")
+set(ASM_FLAGS "${ISA_ASM_FLAGS}")
 
 # This is the base set of compile flags used in any build on any compiler.
 SET (BASE_CFLAGS "${CFLAGS} -ffreestanding -fno-builtin -nostdlib -nostdinc -fstrength-reduce -fno-builtin-time -fno-builtin-puts -fno-builtin-printf -fno-builtin-function -finline-functions -nostdinc -fno-stack-protector -fomit-frame-pointer -nostdlib")
@@ -159,20 +157,12 @@ if(PERL AND NOT CMAKE_C_COMPILER_ID STREQUAL "Clang")
 	set(CMAKE_C_LINK_EXECUTABLE "${PERL} ${CMAKE_SOURCE_DIR}/run-cc.pl -q ${CMAKE_C_LINK_EXECUTABLE}")
 	set(CMAKE_C_CREATE_SHARED_MODULE "${PERL} ${CMAKE_SOURCE_DIR}/run-cc.pl -q ${CMAKE_C_CREATE_SHARED_MODULE}")
 	# Assembly compiles
-	set(CMAKE_ASM_COMPILE_OBJECT "${PERL} ${CMAKE_SOURCE_DIR}/run-cc.pl -q ${CMAKE_ASM_COMPILE_OBJECT}")
+	set(CMAKE_ASM_COMPILE_OBJECT "${PERL} ${CMAKE_SOURCE_DIR}/run-cc.pl -q <CMAKE_ASM-ATT_COMPILER> ${ASM_FLAGS} -o <OBJECT> <SOURCE>")
 else(PERL AND NOT CMAKE_C_COMPILER_ID STREQUAL "Clang")
 	# We're not doing colored builds or we're clang.
-	# C++ compiles
-	set(CMAKE_CXX_COMPILE_OBJECT "${PERL} ${CMAKE_SOURCE_DIR}/run-cc.pl -q ${CMAKE_CXX_COMPILE_OBJECT}")
-	set(CMAKE_CXX_LINK_EXECUTABLE "${PERL} ${CMAKE_SOURCE_DIR}/run-cc.pl -q ${CMAKE_CXX_LINK_EXECUTABLE}")
-	set(CMAKE_CXX_CREATE_SHARED_MODULE "${PERL} ${CMAKE_SOURCE_DIR}/run-cc.pl -q ${CMAKE_CXX_CREATE_SHARED_MODULE}")
-	# C compiles
-	set(CMAKE_C_COMPILE_OBJECT "${PERL} ${CMAKE_SOURCE_DIR}/run-cc.pl -q ${CMAKE_C_COMPILE_OBJECT}")
-	set(CMAKE_C_LINK_EXECUTABLE "${PERL} ${CMAKE_SOURCE_DIR}/run-cc.pl -q ${CMAKE_C_LINK_EXECUTABLE}")
-	set(CMAKE_C_CREATE_SHARED_MODULE "${PERL} ${CMAKE_SOURCE_DIR}/run-cc.pl -q ${CMAKE_C_CREATE_SHARED_MODULE}")
 	# Assembly compiles
-	set(CMAKE_ASM_COMPILE_OBJECT "${PERL} ${CMAKE_SOURCE_DIR}/run-cc.pl -q ${CMAKE_ASM_COMPILE_OBJECT}")
-endif(PERL AND USE_RUN_CC_PL AND NOT CMAKE_C_COMPILER_ID STREQUAL "Clang")
+	SET(CMAKE_ASM-ATT_COMPILE_OBJECT  "<CMAKE_ASM-ATT_COMPILER> ${ASM_FLAGS} -o <OBJECT> <SOURCE>")
+endif(PERL AND NOT CMAKE_C_COMPILER_ID STREQUAL "Clang")
 
 message(STATUS "SOURCE_FILES: ${SOURCE_FILES}")
 add_executable(${PROJECT_NAME} ${SOURCE_FILES})

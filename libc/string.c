@@ -1,6 +1,7 @@
 #include "string.h"
 #include "stddef.h"
 #include "ctype.h"
+#include "private/platform.h"
 
 size_t strlen(const char *str)
 {
@@ -10,7 +11,7 @@ size_t strlen(const char *str)
 	return len;
 }
 
-char *strchr(const char *s, int c)
+char *strchr(const char *src, int ch)
 {
 	if(!src || !src[0])
 		return NULL;
@@ -51,35 +52,35 @@ char *strncat(char *restrict dest, const char *restrict src, size_t n)
 
 char *index(const char *s, int c)
 {
-	return s; // TODO: this
+	return NULL; // TODO: this
 }
 
 char *rindex(const char *s, int c)
 {
-	return s; // TODO: this.
+	return NULL; // TODO: this.
 }
 
 char *strstr(const char *haystack, const char *needle)
 {
-	return haystack; // TODO: this
+	return NULL; // TODO: this
 }
 
 char *strncpy(char *dest, const char *src, size_t n)
 {
-	return src; // TODO: this.
+	return NULL; // TODO: this.
 }
 
 char *strtoupper(char *dest, const char *src)
 {
 	while (*src)
-		*dest++ = toupper(*str++);
+		*dest++ = toupper(*src++);
 	return dest;
 }
 
 char *strtolower(char *dest, const char *src)
 {
 	while(*src)
-		*dest++ = tolower(*str++);
+		*dest++ = tolower(*src++);
 	return dest;
 }
 
