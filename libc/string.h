@@ -4,6 +4,7 @@
 
 extern size_t strlen(const char*);
 extern char *strchr(const char *s, int c);
+extern int strcmp(const char *s1, const char *s2);
 extern int strcasecmp(const char *s1, const char *s2);
 extern char *strcat(char *dest, const char *src);
 extern char *index(const char *s, int c);
