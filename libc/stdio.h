@@ -1,9 +1,7 @@
-// Video memory pointer - always constant
-unsigned short *vidmem = (unsigned short *) 0xB8000;
+#ifndef __STDIO_H__
+#define __STDIO_H__
 
-void vidmemwrite(const char* str)
-{
-	unsigned i;
-	for (i = 0; str[i] != NULL; ++i)
-		vidmem[i] = (unsigned char) str[i] | 0x0700; //What's 0x0700?
-}
+extern int printf(const char *, ...);
+extern int printcf(const char *, int, ...);
+
+#endif
