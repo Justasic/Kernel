@@ -1,3 +1,5 @@
+#include "stdio.h"
+
 // Video memory pointer - always constant
 unsigned short *vidmem = (unsigned short *) 0xB8000;
 
@@ -10,6 +12,9 @@ void kern_start(void)
 	unsigned i;
 	
 	for(ch = str, i = 0; *ch; ch++, i++)
+		// The constant 0x07000 is the background and foreground color
+		// set in the upper bits of the character.
+		// 0xFFBBCC - FF = foreground; BB = Background; CC = ascii character
 		vidmem[i] = (unsigned char) *ch | 0x0700;
 	
 }
