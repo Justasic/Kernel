@@ -14,7 +14,7 @@ void kern_start(void)
 	for(ch = str, i = 0; *ch; ch++, i++)
 		// The constant 0x07000 is the background and foreground color
 		// set in the upper bits of the character.
-		// 0xFB??CC - FB = foreground and Background; CC = ascii character
+		// 0xFBCC - FB = foreground and Background; CC = ascii character
 		vidmem[i] = (unsigned char) *ch | 0x0700; 
 	
 }
