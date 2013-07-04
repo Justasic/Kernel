@@ -20,6 +20,17 @@ char *strchr(const char *s, int c)
 	return (char*)src;
 }
 
+int strcmp(const char *s1, const char *s2)
+{
+	unsigned s1l = strlen(s1);
+	unsigned s2l = strlen(s2);
+	unsigned i = 0;
+	unsigned r = 0;
+	while ((s1[i] != NULL && s2[i] != NULL) && !(r = s1[i] - s2[i]))
+		++i;
+	if (s1l - 1 > i) { return r; } else { return 0; }
+}
+
 int strcasecmp(const char *s1, const char *s2)
 {
 	return 0; // TODO: this.
