@@ -11,10 +11,6 @@ void kern_start(void)
 	
 	for(ch = str, i = 0; *ch; ch++, i++)
 		vidmem[i] = (unsigned char) *ch | 0x0700;
-
-	for(;;) // Idle loop to stop system.
-		// We should tell the CPU to ignore all maskable interrupts
-		// and halt instead of an idle loop though..
-		;
+	
 }
 
