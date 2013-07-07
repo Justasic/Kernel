@@ -24,7 +24,7 @@ char *base10(unsigned x, char *s)
 	if (!x)
 		*--s = '0';
 	for (; x; x/=10)
-		*--s = '0'+x%10;
+		*--s = '0'+ x % 10;
 	return s;
 }
 

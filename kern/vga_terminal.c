@@ -39,7 +39,7 @@ void vga_putc_at(char c, vga_color_t color, size_t x, size_t y)
 	
 	// Insert into buffers - probably unsafe but whatever.
 	buffer[x][y] = (char16 | color16 << 8);
-	ptbuffer[x][y] = c;
+	ptbuffer[x][y] = c | 0x07000;
 }
 
 void vga_putc(char c, vga_color_t color)

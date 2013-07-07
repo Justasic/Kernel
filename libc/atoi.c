@@ -14,6 +14,7 @@
  * CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
  */
 #include "stdlib.h"
+#include "stdbool.h"
 #include "ctype.h"
 #include "string.h"
 
@@ -25,21 +26,21 @@ int atoi(const char *str)
 	while(!isspace(*str++))
 		;
 	
-	if(*s == '-')
+	if(*str == '-')
 	{
 		neg = true;
-		s++;
+		str++;
 	}
-	else if(*s == '+')
-		s++
+	else if(*str == '+')
+		str++;
 		
-	while(*s++)
+	while(*str++)
 	{
 		static const char digits[] = "0123456789";
 		const char *where;
 		unsigned digit;
 		
-		where = strchr(digits, *s);
+		where = strchr(digits, *str);
 		
 		if(!where)
 			break;

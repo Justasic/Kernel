@@ -40,7 +40,7 @@ char *strchr(const char *src, int ch)
 int strcmp(const char *s1, const char *s2)
 {
 	unsigned s1l = strlen(s1);
-	unsigned s2l = strlen(s2);
+	//unsigned s2l = strlen(s2);
 	unsigned i = 0;
 	unsigned r = 0;
 	while ((s1[i] != NULL && s2[i] != NULL) && !(r = s1[i] - s2[i]))
@@ -64,6 +64,35 @@ char *strncat(char *restrict dest, const char *restrict src, size_t n)
 	while(n-- > 0)
 		*dest++ = *src++;
 	return dest;
+}
+
+char *strrev(char *_str)
+{
+	size_t i = 0, j = strlen(_str)-1;
+	char tmp;
+	while (i < j)
+	{
+		tmp = _str[i];
+		_str[i] = _str[j];
+		_str[j] = tmp;
+		i++;
+		j--;
+	}
+	return _str;
+}
+
+char *strnrev(char *_str, size_t len)
+{
+	size_t i = 0, j = len-1;
+	char tmp;
+	while (i < j)
+	{
+		tmp = _str[i];
+		_str[i] = _str[j];
+		_str[j] = tmp;
+		i++;
+		j--;
+	}
 }
 
 char *index(const char *s, int c)

@@ -27,6 +27,8 @@ extern char *index(const char *s, int c);
 extern char *rindex(const char *s, int c);
 extern char *strstr(const char *haystack, const char *needle);
 extern char *strncpy(char *dest, const char *src, size_t n);
+extern char *strrev(char *_str);
+extern char *strnrev(char *_str, size_t len);
 
 // mem* funcs
 extern int memcmp(const void *cmp1, const void *cmp2, size_t n);

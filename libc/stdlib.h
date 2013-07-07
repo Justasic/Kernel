@@ -17,6 +17,6 @@
 #define __STDLIB_H__
 
 extern int atoi(const char *);
-extern char *itoa(int);
+extern char *itoa(char *buffer, int num);
 
 #endif

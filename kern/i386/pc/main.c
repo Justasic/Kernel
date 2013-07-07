@@ -18,10 +18,11 @@
 #include "vga_terminal.h"
 
 static uint16_t *vidmem = (uint16_t *) 0xB8000;
+static char *str;
 extern void (*print_str)(const char *, size_t len);
 extern uint32_t start_stack;
 extern char *hex(unsigned x, char *s);
-extern char *base10(unsigned x, char *s);
+extern char *itoa(char *buffer, int num);
 
 // Start here? can we do this? idk. I DECLARE 0xC0000 TO BE ALLOCATED!
 //static char *buffer = (char*)0xC0000;
@@ -36,8 +37,8 @@ void kern_start(uint32_t esp)
 	
 	memset(buffer, 0, (1<<16)-1);
 	
-	char *str = base10(esp, buffer+30);
-	strcat(str, " Hello World!");
+	str = itoa(buffer, 1000);
+	//strcat(str, " Hello World!");
 	
 	vga_initialize();
 	char /* *str = "Hello world!",*/ *ch;

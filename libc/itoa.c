@@ -15,21 +15,29 @@
  */
 #include "stdlib.h"
 #include "ctype.h"
+#include "stdbool.h"
 #include "string.h"
 
 char *itoa(char *buffer, int num)
 {
 	//char *buffer = malloc(2*sizeof(num)+1);
-	unsigned next = 0;
-	if(n < 0)
-		buffer[next++] = '-';
-	if(n == 0)
-		buffer[next++] = '0';
-	else
-	{
-		
+	// if negative, need 1 char for the sign
+	int sign = (num < 0) ? true : false;
+	int i = 0;
+	if (num == 0)
+		buffer[i++] = '0';
+	else if (num < 0) {
+		buffer[i++] = '-';
+		num = -num;
 	}
 	
-	buffer[next] = 0;
-	return buffer;
+	while (num > 0) {
+		buffer[i++] = '0' + num % 10;
+		num /= 10;
+	}
+	
+	buffer[i] = '\0';
+	strnrev(buffer + sign, i - sign);
+	
+	return 0;
 }
