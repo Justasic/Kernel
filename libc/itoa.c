@@ -13,18 +13,23 @@
  * IN AN ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF OR IN
  * CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
  */
-#ifndef __STDIO_H__
-#define __STDIO_H__
-#include "stdarg.h"
-#include "stdint.h"
+#include "stdlib.h"
+#include "ctype.h"
+#include "string.h"
 
-extern int printf(const char *, ...);
-extern int printcf(const char *, uint32_t, ...);
-extern int sprintf(char *str, const char *format, ...);
-extern int snprintf(char *str, size_t size, const char *format, ...);
-
-
-extern int vsprintf(char *str, const char *format, va_list ap);
-extern int vsnprintf(char *str, size_t size, const char *format, va_list ap);
-
-#endif
+char *itoa(char *buffer, int num)
+{
+	//char *buffer = malloc(2*sizeof(num)+1);
+	unsigned next = 0;
+	if(n < 0)
+		buffer[next++] = '-';
+	if(n == 0)
+		buffer[next++] = '0';
+	else
+	{
+		
+	}
+	
+	buffer[next] = 0;
+	return buffer;
+}

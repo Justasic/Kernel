@@ -1,4 +1,5 @@
 /*
+ * Copyright (c) 2013, Alyx Wolcott <contact@alyxw.me>
  * Copyright (c) 2013, Justin Crawford <Justasic@gmail.com>
  * Copyright (c) 2013, Piero Barbagelata <lordofsraam@hotmail.com>
  * 
@@ -13,18 +14,14 @@
  * IN AN ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF OR IN
  * CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
  */
-#ifndef __STDIO_H__
-#define __STDIO_H__
-#include "stdarg.h"
+
+#ifndef __MALLOC_H__
+#define __MALLOC_H__
 #include "stdint.h"
 
-extern int printf(const char *, ...);
-extern int printcf(const char *, uint32_t, ...);
-extern int sprintf(char *str, const char *format, ...);
-extern int snprintf(char *str, size_t size, const char *format, ...);
-
-
-extern int vsprintf(char *str, const char *format, va_list ap);
-extern int vsnprintf(char *str, size_t size, const char *format, va_list ap);
+extern void *malloc(size_t size);
+extern void *calloc(size_t nmemb, size_t size);
+extern void *realloc(void *ptr, size_t size);
+extern void free(void *ptr);
 
 #endif

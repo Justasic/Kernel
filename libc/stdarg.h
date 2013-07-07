@@ -13,18 +13,27 @@
  * IN AN ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF OR IN
  * CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
  */
-#ifndef __STDIO_H__
-#define __STDIO_H__
-#include "stdarg.h"
-#include "stdint.h"
+#ifndef __STDARG_H__
+#define __STDARG_H__
 
-extern int printf(const char *, ...);
-extern int printcf(const char *, uint32_t, ...);
-extern int sprintf(char *str, const char *format, ...);
-extern int snprintf(char *str, size_t size, const char *format, ...);
+#define va_alist __builtin_va_alist
+#define __va_ellipsis ...
 
+typedef int __builtin_va_alist_t __attribute__((__mode__(__word__)));
 
-extern int vsprintf(char *str, const char *format, va_list ap);
-extern int vsnprintf(char *str, size_t size, const char *format, va_list ap);
+#define va_dcl __builtin_va_alist_t __builtin_va_alist; ...
+
+/* Define __gnuc_va_list, just as in stdarg.h.  */
+#ifndef __GNUC_VA_LIST
+#define __GNUC_VA_LIST
+typedef __builtin_va_list __gnuc_va_list;
+#endif
+
+#define va_start(v)      __builtin_va_start((v))
+#define va_end           __builtin_va_end
+#define va_arg           __builtin_va_arg
+#define __va_copy(d,s)   __builtin_va_copy((d), (s))
+
+typedef __gnuc_va_list va_list;
 
 #endif

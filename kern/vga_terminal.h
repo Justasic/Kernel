@@ -13,18 +13,41 @@
  * IN AN ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF OR IN
  * CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
  */
-#ifndef __STDIO_H__
-#define __STDIO_H__
-#include "stdarg.h"
+#ifndef __VGA_TERMINAL_H__
+#define __VGA_TERMINAL_H__
+#include "stdbool.h"
 #include "stdint.h"
 
-extern int printf(const char *, ...);
-extern int printcf(const char *, uint32_t, ...);
-extern int sprintf(char *str, const char *format, ...);
-extern int snprintf(char *str, size_t size, const char *format, ...);
+/* Hardware text mode color constants. */
+enum vga_color
+{
+	COLOR_BLACK = 0,
+	COLOR_BLUE = 1,
+	COLOR_GREEN = 2,
+	COLOR_CYAN = 3,
+	COLOR_RED = 4,
+	COLOR_MAGENTA = 5,
+	COLOR_BROWN = 6,
+	COLOR_LIGHT_GREY = 7,
+	COLOR_DARK_GREY = 8,
+	COLOR_LIGHT_BLUE = 9,
+	COLOR_LIGHT_GREEN = 10,
+	COLOR_LIGHT_CYAN = 11,
+	COLOR_LIGHT_RED = 12,
+	COLOR_LIGHT_MAGENTA = 13,
+	COLOR_LIGHT_BROWN = 14,
+	COLOR_WHITE = 15
+};
 
+typedef uint8_t vga_color_t;
 
-extern int vsprintf(char *str, const char *format, va_list ap);
-extern int vsnprintf(char *str, size_t size, const char *format, va_list ap);
+extern void vga_putc_at(char c, vga_color_t color, size_t x, size_t y);
+extern void vidmemwrite(const char* str, vga_color_t color);
+extern void vga_clear(void);
+extern void vga_initialize(void);
+extern vga_color_t vga_color(enum vga_color fg, enum vga_color bg);
+extern void vga_putc(char c, vga_color_t color);
+extern void vga_redraw(bool plaintext);
+
 
 #endif

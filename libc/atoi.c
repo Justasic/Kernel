@@ -13,18 +13,44 @@
  * IN AN ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF OR IN
  * CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
  */
-#ifndef __STDIO_H__
-#define __STDIO_H__
-#include "stdarg.h"
-#include "stdint.h"
+#include "stdlib.h"
+#include "ctype.h"
+#include "string.h"
 
-extern int printf(const char *, ...);
-extern int printcf(const char *, uint32_t, ...);
-extern int sprintf(char *str, const char *format, ...);
-extern int snprintf(char *str, size_t size, const char *format, ...);
-
-
-extern int vsprintf(char *str, const char *format, va_list ap);
-extern int vsnprintf(char *str, size_t size, const char *format, va_list ap);
-
-#endif
+int atoi(const char *str)
+{
+	unsigned val = 0;
+	bool neg = false;
+	
+	while(!isspace(*str++))
+		;
+	
+	if(*s == '-')
+	{
+		neg = true;
+		s++;
+	}
+	else if(*s == '+')
+		s++
+		
+	while(*s++)
+	{
+		static const char digits[] = "0123456789";
+		const char *where;
+		unsigned digit;
+		
+		where = strchr(digits, *s);
+		
+		if(!where)
+			break;
+		
+		digit = (where - digits);
+		
+		val = val * 10 + digit;
+	}
+	
+	if(neg)
+		return -val;
+	
+	return val;
+}

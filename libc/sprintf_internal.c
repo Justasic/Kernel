@@ -13,18 +13,41 @@
  * IN AN ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF OR IN
  * CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
  */
-#ifndef __STDIO_H__
-#define __STDIO_H__
+
+#include "stdio.h"
 #include "stdarg.h"
-#include "stdint.h"
-
-extern int printf(const char *, ...);
-extern int printcf(const char *, uint32_t, ...);
-extern int sprintf(char *str, const char *format, ...);
-extern int snprintf(char *str, size_t size, const char *format, ...);
 
 
-extern int vsprintf(char *str, const char *format, va_list ap);
-extern int vsnprintf(char *str, size_t size, const char *format, va_list ap);
+char *base10(unsigned x, char *s)
+{
+	*--s = 0;
+	if (!x)
+		*--s = '0';
+	for (; x; x/=10)
+		*--s = '0'+x%10;
+	return s;
+}
 
-#endif
+char *hex(unsigned x, char *s)
+{
+	unsigned num = 0;
+	*--s = 0;
+	if (!x)
+		*--s = '0';
+	for (; x; x/=16)
+	{
+		num = x % 16;
+		if(num < 10)
+			*--s = '0' + num;
+		else
+			*--s = 'A' + num - 10;
+	}
+	return s;
+}
+
+int sprintf(char *str, const char *format, ...)
+{
+	
+}
+
+

@@ -13,18 +13,28 @@
  * IN AN ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF OR IN
  * CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
  */
-#ifndef __STDIO_H__
-#define __STDIO_H__
-#include "stdarg.h"
-#include "stdint.h"
+#include "malloc.h"
+#include "stddef.h"
 
-extern int printf(const char *, ...);
-extern int printcf(const char *, uint32_t, ...);
-extern int sprintf(char *str, const char *format, ...);
-extern int snprintf(char *str, size_t size, const char *format, ...);
+uint32_t start_stack;
 
+void *malloc(size_t size)
+{
+	if(!size)
+		return NULL;
+}
 
-extern int vsprintf(char *str, const char *format, va_list ap);
-extern int vsnprintf(char *str, size_t size, const char *format, va_list ap);
+void *calloc(size_t nmemb, size_t size)
+{
+	return NULL;
+}
 
-#endif
+void *realloc(void *ptr, size_t size)
+{
+	return NULL;
+}
+
+void free(void *ptr)
+{
+	
+}
