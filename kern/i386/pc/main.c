@@ -35,10 +35,10 @@ void kern_start(uint32_t esp)
 {
 	start_stack = esp;
 	
-	memset(buffer, 0, (1<<16)-1);
+	//memset(buffer, 0, (1<<16)-1);
 	
-	str = itoa(buffer, 1000);
-	//strcat(str, " Hello World!");
+	str = itoa(buffer, esp);
+	strcat(str, " Hello World!");
 	
 	vga_initialize();
 	char /* *str = "Hello world!",*/ *ch;

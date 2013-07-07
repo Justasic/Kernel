@@ -50,20 +50,34 @@ int strcmp(const char *s1, const char *s2)
 
 char *strcat(char *dest, const char *src)
 {
-	if(!dest || !dest[0])
+	if(!dest || !src)
 		return NULL;
-	while(*src)
-		*dest++ = *src++;
-	return dest;
+	
+	// Save a copy of the pointer
+	char *dest_save = dest;
+	// Go to the end of the array
+	dest += strlen(dest);
+	
+	// Copy src to the end of dest
+	while((*dest++ = *src++))
+		continue;
+	
+	// Return the beginning of the array.
+	return (dest = dest_save);
 }
 
 char *strncat(char *restrict dest, const char *restrict src, size_t n)
 {
-	if(!dest || !dest[0])
+	if(!dest || !src)
 		return NULL;
-	while(n-- > 0)
-		*dest++ = *src++;
-	return dest;
+	
+	char *dest_save = dest;
+	dest += n;
+	
+	while((*dest++ = *src++))
+		continue;
+	
+	return (dest = dest_save);
 }
 
 char *strrev(char *_str)
@@ -93,6 +107,7 @@ char *strnrev(char *_str, size_t len)
 		i++;
 		j--;
 	}
+	return _str;
 }
 
 char *index(const char *s, int c)

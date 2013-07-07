@@ -18,26 +18,31 @@
 #include "stdbool.h"
 #include "string.h"
 
+// Thanks very much to piero for this.
 char *itoa(char *buffer, int num)
 {
-	//char *buffer = malloc(2*sizeof(num)+1);
-	// if negative, need 1 char for the sign
-	int sign = (num < 0) ? true : false;
-	int i = 0;
-	if (num == 0)
-		buffer[i++] = '0';
-	else if (num < 0) {
-		buffer[i++] = '-';
+	int m, i;
+	bool neg = false;
+	if (num < 0)
+	{
 		num = -num;
+		neg = true;
 	}
 	
-	while (num > 0) {
-		buffer[i++] = '0' + num % 10;
-		num /= 10;
+	for (m = 10, i = 0; num > 0; m *= 10, i++)
+	{
+		if (m > 10)
+		{
+			buffer[i] = (num % m) / (m / 10);
+			num = num - (num % m);
+		}
+		else
+			num = num - (buffer[i] = num % m);
+		buffer[i] += '0';
 	}
 	
-	buffer[i] = '\0';
-	strnrev(buffer + sign, i - sign);
+	if(neg)
+		strcat(buffer, "-");
 	
-	return 0;
+	return strrev(buffer);
 }
