@@ -82,7 +82,7 @@ char *strncat(char *restrict dest, const char *restrict src, size_t n)
 
 char *strrev(char *_str)
 {
-	size_t i = 0, j = strlen(_str)-1;
+	/*size_t i = 0, j = strlen(_str)-1;
 	char tmp;
 	while (i < j)
 	{
@@ -92,12 +92,14 @@ char *strrev(char *_str)
 		i++;
 		j--;
 	}
-	return _str;
+	return _str;*/
+	// I'm cheap.
+	return (char*)memrev((void*)_str, (const void*)_str, strlen(_str));
 }
 
 char *strnrev(char *_str, size_t len)
 {
-	size_t i = 0, j = len-1;
+/*	size_t i = 0, j = len-1;
 	char tmp;
 	while (i < j)
 	{
@@ -107,7 +109,9 @@ char *strnrev(char *_str, size_t len)
 		i++;
 		j--;
 	}
-	return _str;
+	return _str;*/
+	// Still cheap.
+	return (char*)memrev((void*)_str, (const void*)_str, len);
 }
 
 char *index(const char *s, int c)
@@ -177,5 +181,25 @@ int memcmp(const void *cmp1, const void *cmp2, size_t n)
 		if(*r != *p)
 			return (int)(*p - *r);
 	return 0;
+}
+
+void *memrev(void *dest, const void *src, size_t n)
+{
+	// Iterators, s is beginning, e is end.
+	unsigned char *s = (unsigned char*)dest, *e = ((unsigned char*)dest) + n - 1;
+
+	// Copy to out buffer for our work
+	memcpy(dest, src, n);
+
+	// Iterate and reverse copy the bytes
+	for(; s < e; ++s, --e)
+	{
+		unsigned char t = *s;
+		*s = *e;
+		*e = t;
+	}
+
+	// Return provided buffer
+	return dest;
 }
 

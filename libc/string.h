@@ -34,6 +34,7 @@ extern char *strnrev(char *_str, size_t len);
 extern int memcmp(const void *cmp1, const void *cmp2, size_t n);
 extern void *memcpy(void *dest, const void *src, size_t n);
 extern void *memset(void *s, int c, size_t n);
+extern void *memrev(void *dest, const void *src, size_t n);
 
 // extended libc funcs
 extern char *strtoupper(char *dest, const char *src);
