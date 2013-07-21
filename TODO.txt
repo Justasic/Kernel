@@ -1,0 +1,11 @@
+Needed for functional use
+- malloc()
+- free()
+
+Needed for debugging
+- printf()
+
+Not 100% sure about the following but since I we're supposed to be starting from pure scratch:
+- sbrk()
+- brk()
+- assert()
