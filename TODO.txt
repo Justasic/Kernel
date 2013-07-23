@@ -1,11 +1,30 @@
 Needed for functional use
 - malloc()
+- calloc()
+- realloc()
 - free()
+- assert()
 
 Needed for debugging
 - printf()
+- vsnprintf()
+- sprintf()
 
 Not 100% sure about the following but since I we're supposed to be starting from pure scratch:
 - sbrk()
 - brk()
-- assert()
+
+Required Implementations (in no order)
+- VGA Framebuffer driver
+- Interrupt handler
+- Syscalls
+- Protected-Mode switching
+- Memory Paging
+- Threading
+- User-Mode switching
+- Long-Mode switching
+- Application recognition and execution
+- Filesystems
+- Device Drivers (kernel modules)
+- Keyboard input
+- Mouse input
