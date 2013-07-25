@@ -15,7 +15,7 @@ Not 100% sure about the following but since I we're supposed to be starting from
 - brk()
 
 Required Implementations (in no order)
-- VGA Framebuffer driver
+- VGA Framebuffer driver (or just something other than 80x25 terminals)
 - Interrupt handler
 - Syscalls
 - Protected-Mode switching
@@ -28,3 +28,4 @@ Required Implementations (in no order)
 - Device Drivers (kernel modules)
 - Keyboard input
 - Mouse input
+- CPU Identification and CPU specific configurations
