@@ -20,7 +20,6 @@
 
 static uint16_t *vidmem = (uint16_t *) 0xB8000;
 static char *str;
-extern void (*print_str)(const char *, size_t len);
 extern uint32_t start_stack;
 extern char *hex(unsigned x, char *s);
 extern char *itoa(char *buffer, int num);

@@ -1,6 +1,6 @@
 /*
  * Copyright (c) 2013, Alyx Wolcott <contact@alyxw.me>
- * Copyright (c) 2013, Justin Crawford <Justasic@gmail.com>
+ * Copyright (c) 2013 - 2014, Justin Crawford <Justasic@gmail.com>
  * Copyright (c) 2013, Piero Barbagelata <lordofsraam@hotmail.com>
  * 
  * Permission to use, copy, modify, and/or distribute this software for any purpose
@@ -44,6 +44,7 @@
 # cause massive harm. Instead, we'll provide our own stack. We will allocate
 # room for a small temporary stack by creating a symbol at the bottom of it,
 # then allocating 16384 bytes for it, and finally creating a symbol at the top.
+# the stack will grow up with a max size of 16 KiB
 .section .bootstrap_stack
 stack_bottom:
 .skip 16384 # 16 KiB
@@ -63,6 +64,7 @@ _bootstrap:
 	# (This will grow downwards as the system initializes and uses
 	# more memory)
 	movl $stack_top, %esp
+	movl $stack_bottom, %ebp
 	#movl %esp, %eax
 	push %esp
 

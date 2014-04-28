@@ -17,9 +17,9 @@
 #define __STDIO_H__
 #include "stdarg.h"
 #include "stdint.h"
-#include "vga_terminal.h"
+#include <tty/vga_terminal.h>
 
-#define ___ATTRIB_FORMAT__(x, y) __attribute((format(x, y)))
+#define ___ATTRIB_FORMAT__(x, y) __attribute__((format(printf, x, y)))
 
 
 ___ATTRIB_FORMAT__(1, 2) extern int printf(const char *, ...);

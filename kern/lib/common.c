@@ -12,10 +12,23 @@
  * IN AN ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF OR IN
  * CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
  */
+#include "common.h"
 
-#ifndef __KPANIC_H__
-#define __KPANIC_H__
+void outb(uint16_t port, uint8_t value)
+{
+	__asm__ __volatile__("outb %1, %0" :: "dN" (port), "a" (value));
+}
 
-extern void panic(char *err);
+uint8_t inb(uint16_t port)
+{
+	uint8_t ret;
+	__asm__ __volatile__("inb %1, %0" : "=a" (ret) : "dN" (port));
+	return ret;
+}
 
-#endif // __KPANIC_H__
+uint16_t inw(uint16_t port)
+{
+	uint16_t ret;
+	__asm__ __volatile__("inw %1, %0" : "=a" (ret) : "dN" (port));
+	return ret;
+}

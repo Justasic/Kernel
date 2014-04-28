@@ -14,20 +14,9 @@
  */
 
 #include "panic.h"
+#include "common.h"
 #include <stdio.h>
 #include <stdint.h>
-
-typedef struct
-{
-	uint32_t eax; // EAX register -- general register
-	uint32_t ebx; // EBX register -- general register
-	uint32_t ecx; // ECX register -- general register
-	uint32_t edx; // EDX register -- general register
-	uint32_t esp; // ESP register -- ?
-	uint32_t ebp; // EBP register -- ?
-	uint32_t esi; // ESI register -- Stack Pointer register
-	uint32_t eip; // EIP register -- Instruction pointer register
-} registers_t;
 
 static registers_t regs;
 
@@ -35,39 +24,50 @@ static registers_t regs;
 // the compiler modifying them before we can dump.
 void __attribute__((naked)) panic(char *err)
 {
+	// There's probably a way to use pusha, pushf, and some
+	// other opcodes to push all these to the stack and then
+	// use the registers_t struct
+#if 0
+	
 	// Save the registers to a struct.
 	__asm__ __volatile__(
-		"movl %eax, %0\n\t"
-		"movl %ebx, %1\n\t"
-		"movl %ecx, %2\n\t"
-		"movl %edx, %3\n\t"
-		"movl %esp, %4\n\t"
-		"movl %ebp, %5\n\t"
-		"movl %eip, %6\n\t"
+		"movl %%eax, %0\n\t"
+		"movl %%ebx, %1\n\t"
+		"movl %%ecx, %2\n\t"
+		"movl %%edx, %3\n\t"
+		"movl %%esp, %4\n\t"
+		"movl %%ebp, %5\n\t"
+		"movl %%esi, %6\n\t"
+		"movl %%edi, %7\n\t"
+		"movl %%eip, %8\n\t"
 		/* output operands   */
-		: "0" (regs.eax), "1" (regs.ebx), "2" (regs.ecx), "3" (regs.edx),
-		     "4" (regs.esp), "5" (regs.ebp), "6" (regs.eip)
+		: "=r" (regs.eax), "=r" (regs.ebx), "=r" (regs.ecx), "=r" (regs.edx),
+		     "=r" (regs.esp), "=r" (regs.ebp), "=r" (regs.esi), "=r" (regs.edi),
+			"=r" (regs.eip)
 		: /* input operands    */
 		: /* clobber registers */
 	);
+#endif
 	
 	// Now that we're safe from register clobbering from function calls, we can
 	// call the print functions to dump those registers to the terminal.
-	printcf("PANIC! %s\n", err);
+	printcf("PANIC! %s\n", vga_color(COLOR_BLACK, COLOR_RED), err);
 	
+#if 0
 	// Print the registers
 	printf("\nRegisters:\n");
-	printf(" eax: ................. %x\n ebx: ................. %x\n ecx: ................. %x\n", regs->eax, regs->ebx, regs->ecx);
-	printf(" edx: ................. %x\n esp: ................. %x\n ebp: ................. %x\n", regs->edx, regs->esp, regs->ebp);
-	printf(" eip: ................. %x\n cr0: ................. %x\n cr3: ................. %x\n", regs->eip, cr0, cr3);
-	printf(" Interrupt Number: .... %x\n", regs->int_no);
-	printf(" Error Code: .......... %x\n", regs->err_code);
-	printf(" EFLAGS: .............. %x\n", regs->eflags);
-	printf(" User ESP: ............ %x\n", regs->useresp);
+	printf(" eax: ................. %x\n ebx: ................. %x\n ecx: ................. %x\n", regs.eax, regs.ebx, regs.ecx);
+	printf(" edx: ................. %x\n esp: ................. %x\n ebp: ................. %x\n", regs.edx, regs.esp, regs.ebp);
+	printf(" eip: ................. %x\n cr0: ................. %x\n cr3: ................. %x\n", regs.eip, cr0, cr3);
+	printf(" Interrupt Number: .... %x\n", regs.int_no);
+	printf(" Error Code: .......... %x\n", regs.err_code);
+	printf(" EFLAGS: .............. %x\n", regs.eflags);
+	printf(" User ESP: ............ %x\n", regs.useresp);
+#endif
 	
 	// Print a stack trace so we know wtf is going on
 	printf("\n\nStack Trace:\n");
-	printf("Unimplemented\n");
+	printf(" Unimplemented\n");
 	
 	// We're done with whatever we're doing.
 	// Hang the PC until the user forces a reboot.

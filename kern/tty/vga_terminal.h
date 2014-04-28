@@ -15,8 +15,8 @@
  */
 #ifndef __VGA_TERMINAL_H__
 #define __VGA_TERMINAL_H__
-#include "stdbool.h"
-#include "stdint.h"
+#include <stdbool.h>
+#include <stdint.h>
 
 /* Hardware text mode color constants. */
 enum vga_color
@@ -39,15 +39,21 @@ enum vga_color
 	COLOR_WHITE         = 15
 };
 
+// Our color type.
 typedef uint8_t vga_color_t;
 
-extern void vga_putc_at(char c, vga_color_t color, size_t x, size_t y);
-extern void vidmemwrite(const char* str, vga_color_t color);
-extern void vga_clear(void);
-extern void vga_initialize(void);
-extern vga_color_t vga_color(enum vga_color fg, enum vga_color bg);
-extern void vga_putc(char c, vga_color_t color);
-extern void vga_redraw(bool plaintext);
+// Redraw the terminal -- same as vga_initialize
+#define vga_clear vga_initialize
 
+// External functions.
+extern void vga_write_nstring(const char *str, size_t len, vga_color_t color);
+extern void vga_write_string(const char* str, vga_color_t color);
+extern void vga_initialize(void);
+extern void vga_putc(char c, vga_color_t color);
+extern void vga_redraw(void);
+
+// set in the upper bits of the character.
+// 0xFBCC - FB = foreground and Background; CC = ascii character
+inline vga_color_t vga_color(enum vga_color fg, enum vga_color bg) { return (fg << 4) | (bg & 0x0F); }
 
 #endif
