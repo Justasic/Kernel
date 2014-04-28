@@ -18,7 +18,7 @@
 #include "stdarg.h"
 
 
-char *base10(unsigned x, char *s)
+static char *base10(unsigned x, char *s)
 {
 	*--s = 0;
 	if (!x)
@@ -28,7 +28,7 @@ char *base10(unsigned x, char *s)
 	return s;
 }
 
-char *hex(unsigned x, char *s)
+static char *hex(unsigned x, char *s)
 {
 	unsigned num = 0;
 	*--s = 0;
@@ -45,9 +45,25 @@ char *hex(unsigned x, char *s)
 	return s;
 }
 
-int sprintf(char *str, const char *format, ...)
+static char *bin(unsigned x, char *s)
 {
-	
+	int iterations = sizeof(x) / CHAR_BIT;
+// 	for (int )
 }
 
 
+int vsnprintf(char *str, size_t size, const char *format, va_list ap)
+{
+	char *save = str;
+	int state = 0;
+	va_start(ap, *format);
+	for (; *fmt != 0; *fmt++)
+	{
+		switch (*fmt)
+		{
+			case '%':
+			default:
+				*str++ = *fmt++;
+		}
+	}
+}

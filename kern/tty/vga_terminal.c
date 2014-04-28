@@ -70,17 +70,9 @@ vga_color_t vga_color(enum vga_color fg, enum vga_color bg)
 }
 
 // These are global string printing driver interfaces, required when initializing our terminal here
-extern void (*print_str)(const char *, size_t len);
-extern void (*print_color)(const char *, size_t len, uint32_t color);
+extern void (*print_color)(const char *, size_t len, vga_color_t color);
 
-void vga_print_str(const char *str, size_t len)
-{
-	vga_write_string(str, vga_color(COLOR_WHITE, COLOR_BLACK));
-}
-
-// 32 - 00000000000000000000000000000000
-// 8  - 00000000
-
+// This is used to write a color to a string of text.
 void vga_print_color(const char *str, size_t len, uint32_t color)
 {
 	// Convert the color from 32 bit integer to an 8 bit integer
@@ -89,28 +81,30 @@ void vga_print_color(const char *str, size_t len, uint32_t color)
 	vga_write_string(str, color8);
 }
 
-
+// Initialize the VGA console
 void vga_initialize(void)
 {
 	row = column = 0;
 	vga_color_t color = vga_color(COLOR_WHITE, COLOR_BLACK);
-	size_t x, y;
 	
-	for(y = 0; y < VGA_HEIGHT; y++)
-		for(x = 0; x < VGA_WIDTH; x++)
+	for(size_t x = 0; x < VGA_WIDTH; x++)
+	{
+		for(size_t y = 0; y < VGA_HEIGHT; y++)
 			vga_putc_at(' ', color, x, y);
+	}
 
 	memset(&buffer, 0, VGA_HEIGHT * VGA_WIDTH);
 	memset(&ptbuffer, 0, VGA_HEIGHT * VGA_WIDTH);
-	print_str = vga_print_str;
 	print_color = vga_print_color;
 }
 
+// Clear the VGA console
 void vga_clear(void)
 {
 	vga_initialize();
 }
 
+// Redraw the console.
 void vga_redraw(bool plaintext)
 {
 	// Clear the entire terminal

@@ -26,11 +26,15 @@ void *malloc(size_t size)
 
 void *calloc(size_t nmemb, size_t size)
 {
-	return NULL;
+	if (!nmemb || !size)
+		return NULL;
+	// Funny that this is all calloc really is
+	return malloc(nmemb * size);
 }
 
 void *realloc(void *ptr, size_t size)
 {
+	
 	return NULL;
 }
 

@@ -13,9 +13,10 @@
  * IN AN ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF OR IN
  * CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
  */
-#include "stdio.h"
-#include "string.h"
-#include "vga_terminal.h"
+#include <stdio.h>
+#include <string.h>
+#include <tty/vga_terminal.h>
+#include <lib/panic.h>
 
 static uint16_t *vidmem = (uint16_t *) 0xB8000;
 static char *str;
@@ -46,6 +47,8 @@ void kern_start(uint32_t esp)
 	
 	for(ch = str, i = 0; *ch; ch++, i++)
 		vidmem[i] = (unsigned char) *ch | 0x0700; 
+	
+	panic("Kernel Execution End.");
 	
 	//print_str("Hello World", 0);
 	

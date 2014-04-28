@@ -17,11 +17,15 @@
 #define __STDIO_H__
 #include "stdarg.h"
 #include "stdint.h"
+#include "vga_terminal.h"
 
-extern int printf(const char *, ...);
-extern int printcf(const char *, uint32_t, ...);
-extern int sprintf(char *str, const char *format, ...);
-extern int snprintf(char *str, size_t size, const char *format, ...);
+#define ___ATTRIB_FORMAT__(x, y) __attribute((format(x, y)))
+
+
+___ATTRIB_FORMAT__(1, 2) extern int printf(const char *, ...);
+___ATTRIB_FORMAT__(1, 3) extern int printcf(const char *, uint32_t, ...);
+___ATTRIB_FORMAT__(2, 3) extern int sprintf(char *str, const char *format, ...);
+___ATTRIB_FORMAT__(3, 4) extern int snprintf(char *str, size_t size, const char *format, ...);
 
 
 extern int vsprintf(char *str, const char *format, va_list ap);

@@ -61,7 +61,7 @@ if(${USE_GCC_TOOLCHAIN} STREQUAL "OFF" AND ${USE_LLVM_TOOLCHAIN} STREQUAL "OFF")
 endif(${USE_GCC_TOOLCHAIN} STREQUAL "OFF" AND ${USE_LLVM_TOOLCHAIN} STREQUAL "OFF")
 
 # these are any additional flags which should be added to the base compiles. Things like 32 bit or elf binaries
-set(CFLAGS "${ISA_C_FLAGS} -m32")
+set(CFLAGS "${ISA_C_FLAGS} -m32 -std=c11")
 set(LINKFLAGS "-melf_i386 ${ISA_LINKER_FLAGS} ${PLATFORM_LINKER_FLAGS}")
 set(ASM_FLAGS "${ISA_ASM_FLAGS}")
 

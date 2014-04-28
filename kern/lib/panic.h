@@ -1,7 +1,5 @@
 /*
- * Copyright (c) 2013, Alyx Wolcott <contact@alyxw.me>
- * Copyright (c) 2013, Justin Crawford <Justasic@gmail.com>
- * Copyright (c) 2013, Piero Barbagelata <lordofsraam@hotmail.com>
+ * Copyright (c) 2014, Justin Crawford <Justasic@gmail.com>
  * 
  * Permission to use, copy, modify, and/or distribute this software for any purpose
  * with or without fee is hereby granted, provided that the above copyright notice 
@@ -14,21 +12,10 @@
  * IN AN ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF OR IN
  * CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
  */
-#ifndef __STDDEF_H__
-#define __STDDEF_H__
 
-#define NULL 0x00
+#define __KPANIC_H__
+#define __KPANIC_H__
 
-#ifndef _DEBUG
-# define ASSERT(x) \
-	do { \
-		if (!(x)) \
-			panic("\"##x\" was false!"); \
-	while (0)
-#else
-# define ASSERT()
-#endif
+extern void panic(char *err);
 
-
-#endif
-
+#endif // __KPANIC_H__

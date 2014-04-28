@@ -14,17 +14,41 @@
  * CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
  */
 
-#include "stdio.h"
-#include "stdarg.h"
+#include <stdio.h>
+#include <stdarg.h>
+#include <string.h>
+#include <malloc.h>
+#include <tty/vga_terminal.h>
+
 
 // Prints colored and non-colored strings, these should be initialized when the kernel starts.
-void (*print_str)(const char *, size_t len);
-void (*print_color)(const char *, size_t len, uint32_t color);
+// This is defined to allow for re-initialization by a better driver later in
+// the kernel init stages.
+void (*print_color)(const char *, size_t len, vga_color_t color);
 
 // Print formatted
 int printf(const char *fmt, ...)
 {
-	//int width
+	// Call vsnprintf instead of decoding here, saves function calls.
+// 	vsnprintf(char *str, size_t size, const char *format, va_list ap)
+	if (!print_color)
+		return -1;
+	
+	// guess memory size.
+	size_t newlen = strlen(fmt) * 2;
+	char *str = malloc(newlen);
+	
+	va_args ap;
+	va_init(ap, fmt);
+	
+	vsnprintf(str, newlen, fmt);
+	
+	va_end(ap);
+	
+	if (!print_color)
+		print_color(str, newlen, vga_color(COLOR_WHITE, COLOR_BLACK));
+		
+	free(str);
 }
 
 // Print formatted color
@@ -43,7 +67,12 @@ int vsprintf(char *str, const char *format, va_list ap)
 	
 }
 
-int vsnprintf(char *str, size_t size, const char *format, va_list ap)
+int sprintf(char *str, const char *format, ...)
 {
+	// The joy of having our own Libc is that because we defined malloc,
+	// we can determine the max size of the string without killing the
+	// entire kernel due to a memory fault.
 	
+	// 
+	// return sprintf(str, <size>, format, ap);
 }
