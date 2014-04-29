@@ -18,6 +18,13 @@
 #include "stdarg.h"
 #include "limits.h"
 
+// TODO: this is temporary to clear away some of the warnings
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wunused-variable"
+#pragma clang diagnostic ignored "-Wunused-parameter"
+#pragma clang diagnostic ignored "-Wunused-function"
+#pragma clang diagnostic ignored "-Wreturn-type"
+
 
 static char *base10(unsigned x, char *s)
 {
@@ -68,3 +75,5 @@ int vsnprintf(char *str, size_t size, const char *format, va_list ap)
 		}
 	}
 }
+
+#pragma clang diagnostic pop

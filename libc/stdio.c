@@ -20,6 +20,12 @@
 #include "malloc.h"
 #include <tty/vga_terminal.h>
 
+// TODO: this is temporary to clear away some of the warnings
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wunused-variable"
+#pragma clang diagnostic ignored "-Wunused-parameter"
+#pragma clang diagnostic ignored "-Wunused-function"
+#pragma clang diagnostic ignored "-Wreturn-type"
 
 // Prints colored and non-colored strings, these should be initialized when the kernel starts.
 // This is defined to allow for re-initialization by a better driver later in
@@ -76,3 +82,5 @@ int sprintf(char *str, const char *format, ...)
 	// 
 	// return sprintf(str, <size>, format, ap);
 }
+
+#pragma clang diagnostic pop

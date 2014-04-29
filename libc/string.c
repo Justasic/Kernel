@@ -19,6 +19,13 @@
 #include "ctype.h"
 #include "private/platform.h"
 
+// TODO: this is temporary to clear away some of the warnings
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wunused-variable"
+#pragma clang diagnostic ignored "-Wunused-parameter"
+#pragma clang diagnostic ignored "-Wunused-function"
+#pragma clang diagnostic ignored "-Wreturn-type"
+
 size_t strlen(const char *str)
 {
 	size_t len = 0;
@@ -203,3 +210,4 @@ void *memrev(void *dest, const void *src, size_t n)
 	return dest;
 }
 
+#pragma clang diagnostic pop

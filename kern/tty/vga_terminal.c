@@ -32,16 +32,13 @@ uint8_t column;
 #define VGA_HEIGHT 24
 
 // Keep a buffer of all text on screen, allows redraws
-uint16_t buffer[VGA_HEIGHT][VGA_WIDTH];
+uint16_t buffer[VGA_HEIGHT * VGA_WIDTH];
 
 // Scrolls the text on the screen up by one line.
 static void _vgaScroll(void)
 {
 	// A black-background, white-foreground space character.
 	uint16_t blank = ((vga_color(COLOR_BLACK, COLOR_WHITE) << 8) | ' ');
-	// Get a space character with the default color attributes.
-// 	uint8_t attributeByte = (0 /*black*/ << 4) | (15 /*white*/ & 0x0F);
-// 	uint16_t blank = 0x20 /* space */ | (attributeByte << 8);
 	
 	// Row 25 is the end, this means we need to scroll up
 	if(row >= (VGA_HEIGHT+1))
@@ -104,7 +101,7 @@ void vga_putc(char c, vga_color_t color)
 	else if(c >= ' ')
 	{
 		location = vidmem + (row * VGA_WIDTH + column);
-		*location = c | color;
+		*location = c | (color << 8);
 		column++;
 	}
 	
@@ -120,17 +117,6 @@ void vga_putc(char c, vga_color_t color)
 	_vgaScroll();
 	// Move the hardware cursor.
 	_vgaMoveCursor();
-#if 0
-	vga_putc_at(c, color, column, row);
-	
-	// Make sure we're not going off screen
-	if(++column == VGA_WIDTH)
-	{
-		column = 0;
-		if(++row == VGA_HEIGHT)
-			row = 0;
-	}
-#endif
 }
 
 // Write a null-terminated string
@@ -146,19 +132,11 @@ void vga_write_nstring(const char *str, size_t len, vga_color_t color)
 // Initialize the VGA console
 void vga_initialize(void)
 {
-#if 0
 	row = column = 0;
-	vga_color_t color = vga_color(COLOR_WHITE, COLOR_BLACK);
-	
-	for(size_t x = 0; x < VGA_WIDTH; x++)
-	{
-		for(size_t y = 0; y < VGA_HEIGHT; y++)
-			vga_putc_at(' ', color, x, y);
-	}
-#else
 	uint16_t blank = ((vga_color(COLOR_BLACK, COLOR_WHITE) << 8) | ' ');
-	memset(vidmem, blank, VGA_HEIGHT * VGA_WIDTH);
-#endif
+	
+	for (size_t i = 0; i < (VGA_HEIGHT * VGA_WIDTH); ++i)
+		vidmem[i] = blank;
 
 	memset(&buffer, 0, VGA_HEIGHT * VGA_WIDTH);
 	print_color = vga_write_nstring;
@@ -170,12 +148,15 @@ void vga_redraw(void)
 	// Set all the characters to a blank space
 	uint16_t blank = ((vga_color(COLOR_BLACK, COLOR_WHITE) << 8) | ' ');
 	memset(vidmem, blank, VGA_HEIGHT * VGA_WIDTH);
+	
+	for (size_t i = 0; i < (VGA_HEIGHT * VGA_WIDTH); ++i)
+		vidmem[i] = buffer[i];
 
-	for (size_t y = 0; y < VGA_HEIGHT; ++y)
-	{
-		for (size_t x = 0; x < VGA_WIDTH; ++x)
-			vidmem[y * VGA_WIDTH + x] = buffer[y][x];
-	}
+// 	for (size_t y = 0; y < VGA_HEIGHT; ++y)
+// 	{
+// 		for (size_t x = 0; x < VGA_WIDTH; ++x)
+// 			vidmem[y * VGA_WIDTH + x] = buffer[y][x];
+// 	}
 	
 	_vgaMoveCursor();
 }

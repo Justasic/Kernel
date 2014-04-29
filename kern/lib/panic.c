@@ -17,6 +17,7 @@
 #include "common.h"
 #include <stdio.h>
 #include <stdint.h>
+#include <tty/vga_terminal.h>
 
 static registers_t regs;
 

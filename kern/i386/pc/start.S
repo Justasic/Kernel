@@ -64,7 +64,7 @@ _bootstrap:
 	# (This will grow downwards as the system initializes and uses
 	# more memory)
 	movl $stack_top, %esp
-	movl $stack_bottom, %ebp
+/* 	movl $stack_bottom, %ebp */
 	#movl %esp, %eax
 	push %esp
 
@@ -80,6 +80,7 @@ _bootstrap:
 
 	## if the CPU still does not hang, do an endless jump loop, retrying the halt each time.
 .sysHang:
+	cli
 	hlt
 	jmp .sysHang
 

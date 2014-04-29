@@ -18,15 +18,14 @@
 #include <tty/vga_terminal.h>
 #include <lib/panic.h>
 
-static uint16_t *vidmem = (uint16_t *) 0xB8000;
-static char *str;
-extern uint32_t start_stack;
-extern char *hex(unsigned x, char *s);
-extern char *itoa(char *buffer, int num);
+#ifdef __LINUX__
+# warning "This kernel is being compiled with a non-cross-compiler!"
+#endif
 
-// Start here? can we do this? idk. I DECLARE 0xC0000 TO BE ALLOCATED!
-//static char *buffer = (char*)0xC0000;
-static char buffer[(1<<16)];
+extern uint32_t start_stack;
+
+// Define this here for now, needs to be in a new file
+void isr_handler() { }
 
 // As much as this goes against things with me, there is really no reason
 // to return an integer.. Maybe in the future we can provide kernel launch
@@ -35,25 +34,13 @@ void kern_start(uint32_t esp)
 {
 	start_stack = esp;
 	
-	//memset(buffer, 0, (1<<16)-1);
-	
-	str = itoa(buffer, esp);
-	strcat(str, " Hello World!");
-	
+	// Initialize the VGA console so we can
+	// have messages printed to the terminal.
 	vga_initialize();
-	char /* *str = "Hello world!",*/ *ch;
-	unsigned i;
 	
-	for(ch = str, i = 0; *ch; ch++, i++)
-		vidmem[i] = (unsigned char) *ch | 0x0700; 
+	vga_write_string("Hello World Test :D!\n", vga_color(COLOR_BLACK, COLOR_WHITE));
 	
-	panic("Kernel Execution End.");
 	
-	//print_str("Hello World", 0);
-	
-// 	vga_initialize();
-// 	
-// 	printf("Hello world!\n");
-	
+// 	panic("Kernel Execution End.");
 }
 

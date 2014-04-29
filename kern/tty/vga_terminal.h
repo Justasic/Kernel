@@ -19,7 +19,7 @@
 #include <stdint.h>
 
 /* Hardware text mode color constants. */
-enum vga_color
+enum vga_colors
 {
 	COLOR_BLACK         = 0,
 	COLOR_BLUE          = 1,
@@ -54,6 +54,9 @@ extern void vga_redraw(void);
 
 // set in the upper bits of the character.
 // 0xFBCC - FB = foreground and Background; CC = ascii character
-inline vga_color_t vga_color(enum vga_color fg, enum vga_color bg) { return (fg << 4) | (bg & 0x0F); }
+// static inline because clang follows C99 standard for inline functions.
+// `- see http://stackoverflow.com/questions/10243018/inline-function-undefined-symbols-error
+static inline vga_color_t vga_color(uint8_t fg, uint8_t bg) { return (fg << 4) | (bg & 0x0F); }
+
 
 #endif

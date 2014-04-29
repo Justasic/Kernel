@@ -16,6 +16,13 @@
 #include "malloc.h"
 #include "stddef.h"
 
+// TODO: this is temporary to clear away some of the warnings
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wunused-variable"
+#pragma clang diagnostic ignored "-Wunused-parameter"
+#pragma clang diagnostic ignored "-Wunused-function"
+#pragma clang diagnostic ignored "-Wreturn-type"
+
 uint32_t start_stack;
 
 void *malloc(size_t size)
@@ -42,3 +49,5 @@ void free(void *ptr)
 {
 	
 }
+
+#pragma clang diagnostic pop

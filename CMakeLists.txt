@@ -31,15 +31,20 @@ if(${USE_GCC_TOOLCHAIN} STREQUAL "OFF" AND ${USE_LLVM_TOOLCHAIN} STREQUAL "OFF")
 endif(${USE_GCC_TOOLCHAIN} STREQUAL "OFF" AND ${USE_LLVM_TOOLCHAIN} STREQUAL "OFF")
 
 # these are any additional flags which should be added to the base compiles. Things like 32 bit or elf binaries
-set(CFLAGS "${ISA_C_FLAGS} -m32 -std=c11")
-set(LINKFLAGS "-melf_i386 ${ISA_LINKER_FLAGS} ${PLATFORM_LINKER_FLAGS}")
+set(CFLAGS "${ISA_C_FLAGS} -m32 -std=c11 -Wall -Wextra")
+set(LINKFLAGS "${ISA_LINKER_FLAGS} ${PLATFORM_LINKER_FLAGS}")
 set(ASM_FLAGS "${ISA_ASM_FLAGS}")
 
-find_program(CLANG clang REQUIRED)
-find_program(CLANGXX clang++ REQUIRED)
+find_program(CLANG clang)
+find_program(CLANGXX clang++)
 
-set(CMAKE_C_COMPILER ${CLANG})
-set(CMAKE_CXX_COMPILER ${CLANGXX})
+if (CLANG)
+	set(CMAKE_C_COMPILER ${CLANG})
+endif (CLANG)
+
+if (CLANGXX)
+	set(CMAKE_CXX_COMPILER ${CLANGXX})
+endif (CLANGXX)
 
 
 # Finally name our project now that we have picked our compiler.
@@ -49,20 +54,20 @@ enable_language(ASM-ATT)
 # If we're using clang..
 if(${USE_LLVM_TOOLCHAIN} OR ${CMAKE_C_COMPILER_ID} STREQUAL "Clang")
 	
-	SET (BASE_CFLAGS "${CFLAGS} -ffreestanding -fno-builtin -nostdlib -nostdinc -finline-functions -nostdinc -fno-stack-protector -fomit-frame-pointer -nostdlib")
+	SET (BASE_CFLAGS "${CFLAGS} -ffreestanding -fno-builtin -nostdlib -nostdinc -finline-functions -fno-stack-protector -fomit-frame-pointer -Werror=implicit-function-declaration")
 	
 	SET (LINKFLAGS "-Wl,--script=${PLATFORM_LAYOUT} -Wl,--omagic ${LINKFLAGS}")
 	
 	SET (CMAKE_C_FLAGS                "-Wall -g ${BASE_CFLAGS}")
-	SET (CMAKE_C_FLAGS_DEBUG          "-g ${BASE_CFLAGS}")
+	SET (CMAKE_C_FLAGS_DEBUG          "-g -D_DEBUG ${BASE_CFLAGS}")
 	SET (CMAKE_C_FLAGS_MINSIZEREL     "-Os -DNDEBUG ${BASE_CFLAGS}")
-	SET (CMAKE_C_FLAGS_RELEASE        "-O4 -DNDEBUG ${BASE_CFLAGS}")
+	SET (CMAKE_C_FLAGS_RELEASE        "-O3 -DNDEBUG ${BASE_CFLAGS}")
 	SET (CMAKE_C_FLAGS_RELWITHDEBINFO "-O2 -g ${BASE_CFLAGS}")
 
 	SET (CMAKE_CXX_FLAGS                "-Wall ${BASE_CFLAGS}")
-	SET (CMAKE_CXX_FLAGS_DEBUG          "-g ${BASE_CFLAGS}")
+	SET (CMAKE_CXX_FLAGS_DEBUG          "-g -D_DEBUG ${BASE_CFLAGS}")
 	SET (CMAKE_CXX_FLAGS_MINSIZEREL     "-Os -DNDEBUG ${BASE_CFLAGS}")
-	SET (CMAKE_CXX_FLAGS_RELEASE        "-O4 -DNDEBUG ${BASE_CFLAGS}")
+	SET (CMAKE_CXX_FLAGS_RELEASE        "-O3 -DNDEBUG ${BASE_CFLAGS}")
 	SET (CMAKE_CXX_FLAGS_RELWITHDEBINFO "-O2 -g ${BASE_CFLAGS}")
 	
 	SET (CMAKE_ASM_FLAGS            "-Werror -felf")
@@ -74,19 +79,20 @@ endif(${USE_LLVM_TOOLCHAIN} OR ${CMAKE_C_COMPILER_ID} STREQUAL "Clang")
 if(${USE_GCC_TOOLCHAIN} OR ${CMAKE_C_COMPILER_ID} STREQUAL "GNU")
 	
 	SET (BASE_CFLAGS "${CFLAGS} -ffreestanding -fno-builtin -nostdlib -nostdinc -fstrength-reduce -fno-builtin-time -fno-builtin-puts -fno-builtin-printf -fno-builtin-function -finline-functions -nostdinc -fno-stack-protector -fomit-frame-pointer -nostdlib")
+	SET (LINKFLAGS "${LINKFLAGS} -melf_i386")
 	
 	SET (LINKFLAGS "-T ${PLATFORM_LAYOUT} -N ${LINKFLAGS}")
 	
 	SET (CMAKE_C_FLAGS                "-Wall -g ${BASE_CFLAGS}")
-	SET (CMAKE_C_FLAGS_DEBUG          "-g ${BASE_CFLAGS}")
+	SET (CMAKE_C_FLAGS_DEBUG          "-g -D_DEBUG ${BASE_CFLAGS}")
 	SET (CMAKE_C_FLAGS_MINSIZEREL     "-Os -DNDEBUG ${BASE_CFLAGS}")
-	SET (CMAKE_C_FLAGS_RELEASE        "-O4 -DNDEBUG ${BASE_CFLAGS}")
+	SET (CMAKE_C_FLAGS_RELEASE        "-O3 -DNDEBUG ${BASE_CFLAGS}")
 	SET (CMAKE_C_FLAGS_RELWITHDEBINFO "-O2 -g ${BASE_CFLAGS}")
 
 	SET (CMAKE_CXX_FLAGS                "-Wall ${BASE_CFLAGS}")
-	SET (CMAKE_CXX_FLAGS_DEBUG          "-g ${BASE_CFLAGS}")
+	SET (CMAKE_CXX_FLAGS_DEBUG          "-g -D_DEBUG ${BASE_CFLAGS}")
 	SET (CMAKE_CXX_FLAGS_MINSIZEREL     "-Os -DNDEBUG ${BASE_CFLAGS}")
-	SET (CMAKE_CXX_FLAGS_RELEASE        "-O4 -DNDEBUG ${BASE_CFLAGS}")
+	SET (CMAKE_CXX_FLAGS_RELEASE        "-O3 -DNDEBUG ${BASE_CFLAGS}")
 	SET (CMAKE_CXX_FLAGS_RELWITHDEBINFO "-O2 -g ${BASE_CFLAGS}")
 	
 	SET (CMAKE_ASM_FLAGS            "-Werror -felf")
