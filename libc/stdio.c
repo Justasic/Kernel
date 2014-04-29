@@ -14,10 +14,10 @@
  * CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
  */
 
-#include <stdio.h>
-#include <stdarg.h>
-#include <string.h>
-#include <malloc.h>
+#include "stdarg.h"
+#include "stdio.h"
+#include "string.h"
+#include "malloc.h"
 #include <tty/vga_terminal.h>
 
 
@@ -38,10 +38,10 @@ int printf(const char *fmt, ...)
 	size_t newlen = strlen(fmt) * 2;
 	char *str = malloc(newlen);
 	
-	va_args ap;
-	va_init(ap, fmt);
+	va_list ap;
+	va_start(ap, fmt);
 	
-	vsnprintf(str, newlen, fmt);
+	vsnprintf(str, newlen, fmt, ap);
 	
 	va_end(ap);
 	

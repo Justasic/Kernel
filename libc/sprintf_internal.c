@@ -16,6 +16,7 @@
 
 #include "stdio.h"
 #include "stdarg.h"
+#include "limits.h"
 
 
 static char *base10(unsigned x, char *s)
@@ -56,14 +57,14 @@ int vsnprintf(char *str, size_t size, const char *format, va_list ap)
 {
 	char *save = str;
 	int state = 0;
-	va_start(ap, *format);
-	for (; *fmt != 0; *fmt++)
+// 	va_start(ap, format);
+	while (*format != 0)
 	{
-		switch (*fmt)
+		switch (*format)
 		{
 			case '%':
 			default:
-				*str++ = *fmt++;
+				*str++ = *format++;
 		}
 	}
 }

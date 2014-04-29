@@ -29,10 +29,10 @@ typedef int __builtin_va_alist_t __attribute__((__mode__(__word__)));
 typedef __builtin_va_list __gnuc_va_list;
 #endif
 
-#define va_start(v)      __builtin_va_start((v))
-#define va_end           __builtin_va_end
-#define va_arg           __builtin_va_arg
-#define __va_copy(d,s)   __builtin_va_copy((d), (s))
+#define va_start(ap, param)  __builtin_va_start(ap, param)
+#define va_end(ap)           __builtin_va_end(ap)
+#define va_arg(ap, type)     __builtin_va_arg(ap, type)
+#define __va_copy(d,s)       __builtin_va_copy((d), (s))
 
 typedef __gnuc_va_list va_list;
 
