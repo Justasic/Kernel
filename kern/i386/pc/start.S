@@ -64,8 +64,6 @@ _bootstrap:
 	# (This will grow downwards as the system initializes and uses
 	# more memory)
 	movl $stack_top, %esp
-/* 	movl $stack_bottom, %ebp */
-	#movl %esp, %eax
 	push %esp
 
 	# Jump to C! :D
