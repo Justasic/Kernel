@@ -132,14 +132,26 @@ void vga_write_nstring(const char *str, size_t len, vga_color_t color)
 // Initialize the VGA console
 void vga_initialize(void)
 {
-	row = column = 0;
+	// Check whether we're initialized.
+	static uint8_t initialized = 0;
 	uint16_t blank = ((vga_color(COLOR_BLACK, COLOR_WHITE) << 8) | ' ');
+	row = column = 0;
 	
 	for (size_t i = 0; i < (VGA_HEIGHT * VGA_WIDTH); ++i)
 		vidmem[i] = blank;
 
 	memset(&buffer, 0, VGA_HEIGHT * VGA_WIDTH);
-	print_color = vga_write_nstring;
+	
+	// Since we're an initialization function
+	// as well as a clear function, we wanna be
+	// able to initialize and clear without
+	// initialization. So we check if we have
+	// already been initialized.
+	if (initialized != 0)
+	{
+		print_color = vga_write_nstring;
+		initialized = 1;
+	}
 }
 
 // Redraw the console.

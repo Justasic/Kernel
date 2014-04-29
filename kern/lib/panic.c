@@ -52,7 +52,7 @@ void __attribute__((naked)) panic(char *err)
 	
 	// Now that we're safe from register clobbering from function calls, we can
 	// call the print functions to dump those registers to the terminal.
-	printcf("PANIC! %s\n", vga_color(COLOR_BLACK, COLOR_RED), err);
+	printcf("PANIC! %s\n", vga_color(COLOR_BLACK, COLOR_LIGHT_RED), err);
 	
 #if 0
 	// Print the registers

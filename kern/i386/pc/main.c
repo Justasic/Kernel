@@ -27,9 +27,11 @@ extern uint32_t start_stack;
 // Define this here for now, needs to be in a new file
 void isr_handler() { }
 
-// As much as this goes against things with me, there is really no reason
-// to return an integer.. Maybe in the future we can provide kernel launch
-// arguments from the bootloader but for now? void kern_start(void).
+// Welcome to C. We have alcohol in the libc
+// and there's chips in the IRQs. Be sure to
+// go check out the VGA before you go home
+// tonight. Oh and don't forget, have a good time.
+// ;)
 void kern_start(uint32_t esp)
 {
 	start_stack = esp;
@@ -39,7 +41,7 @@ void kern_start(uint32_t esp)
 	vga_initialize();
 	
 	vga_write_string("Hello World Test :D!\n", vga_color(COLOR_BLACK, COLOR_WHITE));
-	
+	vga_write_string("This is a red string!\n", vga_color(COLOR_BLACK, COLOR_LIGHT_RED));
 	
 // 	panic("Kernel Execution End.");
 }
