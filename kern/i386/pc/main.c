@@ -22,6 +22,18 @@
 # warning "This kernel is being compiled with a non-cross-compiler!"
 #endif
 
+#if 0
+" ____                            __         "
+"/\  _`\                         /\ \        "
+"\ \ \L\ \    ___   __  __     __\ \ \___    "
+" \ \  _ <' /' _ `\/\ \/\ \  /'__`\ \  _ `\  "
+"  \ \ \L\ \/\ \/\ \ \ \_\ \/\  __/\ \ \ \ \ "
+"   \ \____/\ \_\ \_\/`____ \ \____\\\\ \_\ \_\\"
+"    \/___/  \/_/\/_/`/___/> \/____/ \/_/\/_/"
+"                       /\___/               "
+"                       \/__/                "
+#endif
+
 extern uint32_t start_stack;
 
 // Define this here for now, needs to be in a new file
@@ -40,7 +52,20 @@ void kern_start(uint32_t esp)
 	// have messages printed to the terminal.
 	vga_initialize();
 	
-	vga_write_string("Welcome to the Bnyeh Kernel\n\n", vga_color(COLOR_BLACK, COLOR_WHITE));
+	// Logo! :D
+	vga_write_string("Welcome to the Bnyeh Kernel!\n", vga_color(COLOR_BLACK, COLOR_WHITE));
+	vga_write_string(
+		" ____                            __         \n"
+		"/\\  _`\\                         /\\ \\        \n"
+		"\\ \\ \\L\\ \\    ___   __  __     __\\ \\ \\___    \n"
+		" \\ \\  _ <' /' _ `\\/\\ \\/\\ \\  /'__`\\ \\  _ `\\  \n"
+		"  \\ \\ \\L\\ \\/\\ \\/\\ \\ \\ \\_\\ \\/\\  __/\\ \\ \\ \\ \\ \n"
+		"   \\ \\____/\\ \\_\\ \\_\\/`____ \\ \\____\\\\ \\_\\ \\_\\\n"
+		"    \\/___/  \\/_/\\/_/`/___/> \\/____/ \\/_/\\/_/\n"
+		"                       /\\___/               \n"
+		"                       \\/__/                \n\n",
+		vga_color(COLOR_BLACK, COLOR_GREEN)
+	);
 	
 	vga_write_string("Hello World Test :D!\n", vga_color(COLOR_BLACK, COLOR_WHITE));
 	vga_write_string("This is a red string!\n", vga_color(COLOR_BLACK, COLOR_LIGHT_RED));
