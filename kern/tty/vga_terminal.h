@@ -47,6 +47,8 @@ typedef uint8_t vga_color_t;
 
 // External functions.
 extern void vga_write_nstring(const char *str, size_t len, vga_color_t color);
+extern void vga_write_rnstring(const char *str, size_t len);
+extern void vga_write_rstring(const char *str);
 extern void vga_write_string(const char* str, vga_color_t color);
 extern void vga_initialize(void);
 extern void vga_putc(char c, vga_color_t color);

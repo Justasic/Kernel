@@ -125,9 +125,28 @@ void vga_write_string(const char* str, vga_color_t color) { vga_write_nstring(st
 // Write a string with a specific length
 void vga_write_nstring(const char *str, size_t len, vga_color_t color)
 {
-	for(size_t i = 0; i < len; ++i)
+	for (size_t i = 0; i < len; ++i)
 		vga_putc(str[i], color);
 }
+
+// Neat function to write rainbow strings
+void vga_write_rnstring(const char *str, size_t len)
+{
+	for (size_t i = 0; i < len; ++i)
+	{
+		size_t co = i % COLOR_WHITE;
+		if (co == COLOR_DARK_GREY || co == COLOR_LIGHT_BROWN || co == COLOR_BLACK)
+			co = COLOR_LIGHT_MAGENTA; // Just a random color.
+			
+		// if it's an ascii charactor
+		if (str[i] >= ' ')
+			vga_putc(str[i], vga_color(COLOR_BLACK, (vga_color_t)co));
+		else
+			vga_putc(str[i], vga_color(COLOR_BLACK, vga_color(COLOR_BLACK, COLOR_WHITE)));
+	}
+}
+
+void vga_write_rstring(const char *str) { vga_write_rnstring(str, strlen(str)); }
 
 // Initialize the VGA console
 void vga_initialize(void)

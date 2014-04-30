@@ -40,8 +40,11 @@ void kern_start(uint32_t esp)
 	// have messages printed to the terminal.
 	vga_initialize();
 	
+	vga_write_string("Welcome to the Bnyeh Kernel\n\n", vga_color(COLOR_BLACK, COLOR_WHITE));
+	
 	vga_write_string("Hello World Test :D!\n", vga_color(COLOR_BLACK, COLOR_WHITE));
 	vga_write_string("This is a red string!\n", vga_color(COLOR_BLACK, COLOR_LIGHT_RED));
+	vga_write_rstring("FUCKIN RAINBOW!\n");
 	
 // 	panic("Kernel Execution End.");
 }

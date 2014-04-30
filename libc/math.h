@@ -51,12 +51,12 @@ extern long double roundl(long double x);
 
 ////////////////////////////////////////
 // Minimum, Maximum, and difference functions
-extern double fmin(double x     , double y);
-extern float fminf(float x      , float y);
+extern double fmin(double x, double y);
+extern float fminf(float x, float y);
 extern long double fminl(long double x, long double y);
 
-extern double fmax(double x     , double y);
-extern float fmaxf(float x      , float y);
+extern double fmax(double x, double y);
+extern float fmaxf(float x, float y);
 extern long double fmaxl(long double x, long double y);
 
 ////////////////////////////////////////

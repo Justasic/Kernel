@@ -53,7 +53,7 @@ int printf(const char *fmt, ...)
 	va_end(ap);
 	
 	if (!print_color)
-		print_color(str, newlen, vga_color(COLOR_WHITE, COLOR_BLACK));
+		print_color(str, newlen, vga_color(COLOR_BLACK, COLOR_WHITE));
 		
 	free(str);
 }
