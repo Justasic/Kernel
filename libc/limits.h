@@ -18,6 +18,7 @@
 
 #define CHAR_BIT 8
 
+#define MAXFLOAT      3.40282347e+38F
 
 
 #endif // __LIMITS_H__

@@ -10,10 +10,6 @@ Needed for debugging
 - vsnprintf()
 - sprintf()
 
-Not 100% sure about the following but since I we're supposed to be starting from pure scratch:
-- sbrk()
-- brk()
-
 Required Implementations (in no order)
 - VGA Framebuffer driver (or just something other than 80x25 terminals)
 - Interrupt handler
@@ -29,3 +25,4 @@ Required Implementations (in no order)
 - Keyboard input
 - Mouse input
 - CPU Identification and CPU specific configurations
+- Paging

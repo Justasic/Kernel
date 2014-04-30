@@ -19,6 +19,7 @@
 #include "limits.h"
 
 // TODO: this is temporary to clear away some of the warnings
+#warning "Developer notice: This file is incomplete."
 #pragma clang diagnostic push
 #pragma clang diagnostic ignored "-Wunused-variable"
 #pragma clang diagnostic ignored "-Wunused-parameter"
