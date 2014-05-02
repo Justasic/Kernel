@@ -26,6 +26,7 @@
 # pushes the interrupt number to the stack
 # jumps to the common interrupt handler.
 #define ISR_NOERRORCODE(x) \
+	.globl isr##x; \
 	isr##x: \
 		cli; \
 		push $0; \
@@ -38,11 +39,46 @@
 # we just need to define what interrupt
 # is being called then jump to the stub.
 #define ISR_ERRORCODE(x) \
+	.globl isr##x; \
 	isr##x: \
 		cli; \
 		push $##x; \
 		jmp isr_stub;
-		
+
+
+# Our common stub for all interrupts which will prepare us
+# to enter a C function to handle the interrupt.
+isr_stub:
+	pusha          # Pushes all registers to stack -- save while we change the data segment register
+	
+	movw %ds, %ax  # Move data segment register to eax
+	push %eax      # Push eax (data segment reg) to the stack
+	
+	# Load the kernel data segment descriptor
+	movw 0x10, %ax
+	movw %ax, %ds
+	movw %ax, %es
+	movw %ax, %fs
+	movw %ax, %gs
+	
+	# Jump to C and handle the interrupt
+	call isr_handler
+	
+	# Restore original data segment descriptor
+	pop %eax
+	movw %ax, %ds
+	movw %ax, %es
+	movw %ax, %fs
+	movw %ax, %gs
+
+	# Pop all registers -- restore previous registers
+	popa
+	# Cleans up pushed error code and pushed interrupt number
+	addl $8, %esp
+	# Re-enable interrupts
+	sti
+	# Return to where we were when interrupt was called
+	iret
 
 # Interrupts 0-18
 #
@@ -90,6 +126,7 @@ ISR_NOERRORCODE(18)   # Machine check exception
 
 # Reserved interrupts
 ISR_NOERRORCODE(19)
+ISR_NOERRORCODE(20)
 ISR_NOERRORCODE(21)
 ISR_NOERRORCODE(22)
 ISR_NOERRORCODE(23)
@@ -101,39 +138,6 @@ ISR_NOERRORCODE(28)
 ISR_NOERRORCODE(29)
 ISR_NOERRORCODE(30)
 ISR_NOERRORCODE(31)
+	
 
-
-# Our common stub for all interrupts which will prepare us
-# to enter a C function to handle the interrupt.
-.isr_stub:
-	pusha          # Pushes all registers to stack -- save while we change the data segment register
-	
-	movw %ds, %ax  # Move data segment register to eax
-	push %eax      # Push eax (data segment reg) to the stack
-	
-	# Load the kernel data segment descriptor
-	movw 0x10, %ax
-	movw %ax, %ds
-	movw %ax, %es
-	movw %ax, %fs
-	movw %ax, %gs
-	
-	# Jump to C and handle the interrupt
-	call isr_handler
-	
-	# Restore original data segment descriptor
-	pop %eax
-	movw %ax, %ds
-	movw %ax, %es
-	movw %ax, %fs
-	movw %ax, %gs
-
-	# Pop all registers -- restore previous registers
-	popa
-	# Cleans up pushed error code and pushed interrupt number
-	addl $8, %esp
-	# Re-enable interrupts
-	sti
-	# Return to where we were when interrupt was called
-	iret
 	

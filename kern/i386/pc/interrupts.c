@@ -12,24 +12,26 @@
  * IN AN ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF OR IN
  * CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
  */
+#include <tty/vga_terminal.h>
+#include <lib/common.h>
+#include <stdlib.h>
 
-.globl gdt_flush # export as symbol for C
-gdt_flush:
-	movl 4(%esp), %eax # get the pointer to GDT
-	lgdt (%eax)        # load the new GDT pointer
-	
-	movw $0x10, %ax     # 0x10 is the offset to the GDT to our data segment
-	movw %ax, %ds      # Load all the data segment selectors
-	movw %ax, %es
-	movw %ax, %fs
-	movw %ax, %gs
-	movw %ax, %ss
-	ljmp $0x08,$flush    # 0x08 is the offset to our code segment: Far jump!
-flush:
-	ret
+extern void init_gdt(void);
+extern void init_idt(void);
+void initialize_descriptor_tables(void)
+{
+	vga_write_string("Initializing Global Descriptor Table\n", vga_color(COLOR_BLACK, COLOR_WHITE));
+	init_gdt();
+	vga_write_string("Initializing Interrupt Descriptor Table\n", vga_color(COLOR_BLACK, COLOR_WHITE));
+	init_idt();
+}
 
-.globl idt_flush # export as symbol for C
-idt_flush:
-	movl 4(%esp), %eax # Get the pointer to the IDT from stack, passed as a parameter. 
-	lidt (%eax)        # Load the IDT pointer.
-	ret
+void isr_handler(registers_t regs)
+{
+	char buf[255];
+	char *ret = itoa(buf, regs.int_no);
+	ret[254] = 0;
+	vga_write_string("received Interrupt: ", vga_color(COLOR_BLACK, COLOR_WHITE));
+	vga_write_string(ret, vga_color(COLOR_BLACK, COLOR_WHITE));
+	vga_write_string("\n", vga_color(COLOR_BLACK, COLOR_WHITE));
+}

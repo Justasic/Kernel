@@ -36,8 +36,7 @@
 
 extern uint32_t start_stack;
 
-// Define this here for now, needs to be in a new file
-void isr_handler() { }
+extern void initialize_descriptor_tables(void);
 
 // Welcome to C. We have alcohol in the libc
 // and there's chips in the IRQs. Be sure to
@@ -67,9 +66,21 @@ void kern_start(uint32_t esp)
 		vga_color(COLOR_BLACK, COLOR_GREEN)
 	);
 	
+	initialize_descriptor_tables();
+	
 	vga_write_string("Hello World Test :D!\n", vga_color(COLOR_BLACK, COLOR_WHITE));
 	vga_write_string("This is a red string!\n", vga_color(COLOR_BLACK, COLOR_LIGHT_RED));
 	vga_write_rstring("FUCKIN RAINBOW!\n");
+		
+	for (int i = 0; i < 0xFFFF0000; ++i)
+		; // Do something for a period of time... I need a sleep function.
+	
+	__asm__ __volatile__ ("int $0x3");
+	__asm__ __volatile__ ("int $0x4"); 
+	
+	vga_write_string("Derp derp\n",  vga_color(COLOR_BLACK, COLOR_WHITE));
+	for (int i = 0; i < 0xFFFF0000; ++i)
+		; // Do something for a period of time... I need a sleep function.
 	
 // 	panic("Kernel Execution End.");
 }

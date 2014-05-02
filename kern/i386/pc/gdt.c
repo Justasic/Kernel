@@ -13,6 +13,7 @@
  * CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
  */
 #include <stdint.h>
+#include <string.h>
 
 struct gdt_entry_s
 {
@@ -80,7 +81,7 @@ gdt_ptr_t   gdt_ptr;
 // 	gdt_entries[num].access      = access;
 // } 
 
-static void init_gdt()
+void init_gdt(void)
 {
 	gdt_ptr.limit = (sizeof(gdt_entry_t) * 5) - 1;
 	gdt_ptr.base  = (uint32_t)&gdt_entries;
@@ -165,6 +166,3 @@ static void init_gdt()
 	
 	gdt_flush((uint32_t)&gdt_ptr);
 }
-
-idt_entry_t idt_entries[256];
-idt_ptr_t   idt_ptr;
