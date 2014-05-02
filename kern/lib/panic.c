@@ -17,9 +17,6 @@
 #include "common.h"
 #include <stdio.h>
 #include <stdint.h>
-#include <tty/vga_terminal.h>
-
-static registers_t regs;
 
 // Naked function so we can dump registers without
 // the compiler modifying them before we can dump.
@@ -52,7 +49,7 @@ void __attribute__((naked)) panic(char *err)
 	
 	// Now that we're safe from register clobbering from function calls, we can
 	// call the print functions to dump those registers to the terminal.
-	printcf("PANIC! %s\n", vga_color(COLOR_BLACK, COLOR_LIGHT_RED), err);
+	printcf(vga_color(COLOR_BLACK, COLOR_LIGHT_RED), "PANIC! %s\n", err);
 	
 #if 0
 	// Print the registers
