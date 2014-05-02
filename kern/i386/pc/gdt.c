@@ -15,6 +15,9 @@
 #include <stdint.h>
 #include <string.h>
 
+// This structure contains the value of one GDT entry.
+// We use the attribute 'packed' to tell GCC not to change
+// any of the alignment in the structure.
 struct gdt_entry_s
 {
 	unsigned int limit_low:16;
@@ -42,20 +45,6 @@ struct gdt_ptr_s
 	uint32_t base;                // The address of the first gdt_entry_t struct.
 } __attribute__((packed));
 
-// This structure contains the value of one GDT entry.
-// We use the attribute 'packed' to tell GCC not to change
-// any of the alignment in the structure.
-// struct gdt_entry_struct
-// {
-// 	u16int limit_low;           // The lower 16 bits of the limit.
-// 	u16int base_low;            // The lower 16 bits of the base.
-// 	u8int  base_middle;         // The next 8 bits of the base.
-// 	u8int  access;              // Access flags, determine what ring this segment can be used in.
-// 	u8int  granularity;
-// 	u8int  base_high;           // The last 8 bits of the base.
-// } __attribute__((packed));
-// typedef struct gdt_entry_struct gdt_entry2_t;
-
 typedef struct gdt_ptr_s gdt_ptr_t; 
 typedef struct gdt_entry_s gdt_entry_t;
 
@@ -66,20 +55,6 @@ extern void gdt_flush(uint32_t);
 // Global variables to the Global Descriptor Table
 gdt_entry_t gdt_entries[5];
 gdt_ptr_t   gdt_ptr;
-
-// Set the value of one GDT entry.
-// static void gdt_set_gate(s32int num, u32int base, u32int limit, u8int access, u8int gran)
-// {
-// 	gdt_entries[num].base_low    = (base & 0xFFFF);
-// 	gdt_entries[num].base_middle = (base >> 16) & 0xFF;
-// 	gdt_entries[num].base_high   = (base >> 24) & 0xFF;
-// 	
-// 	gdt_entries[num].limit_low   = (limit & 0xFFFF);
-// 	gdt_entries[num].granularity = (limit >> 16) & 0x0F;
-// 	
-// 	gdt_entries[num].granularity |= gran & 0xF0;
-// 	gdt_entries[num].access      = access;
-// } 
 
 void init_gdt(void)
 {

@@ -39,7 +39,7 @@ typedef struct idt_ptr_struct idt_ptr_t;
 idt_entry_t idt_entries[256];
 idt_ptr_t   idt_ptr;
 
-// idt_flush function
+// idt_flush function -- defined in gdt.S
 extern void idt_flush(uint32_t);
 
 // All of the interrupts.

@@ -12,26 +12,21 @@
  * IN AN ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF OR IN
  * CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
  */
-#include <tty/vga_terminal.h>
 #include <lib/common.h>
 #include <stdlib.h>
+#include <stdio.h>
 
 extern void init_gdt(void);
 extern void init_idt(void);
 void initialize_descriptor_tables(void)
 {
-	vga_write_string("Initializing Global Descriptor Table\n", vga_color(COLOR_BLACK, COLOR_WHITE));
+	printf("Initializing Global Descriptor Table\n");
 	init_gdt();
-	vga_write_string("Initializing Interrupt Descriptor Table\n", vga_color(COLOR_BLACK, COLOR_WHITE));
+	printf("Initializing Interrupt Descriptor Table\n");
 	init_idt();
 }
 
 void isr_handler(registers_t regs)
 {
-	char buf[255];
-	char *ret = itoa(buf, regs.int_no);
-	ret[254] = 0;
-	vga_write_string("received Interrupt: ", vga_color(COLOR_BLACK, COLOR_WHITE));
-	vga_write_string(ret, vga_color(COLOR_BLACK, COLOR_WHITE));
-	vga_write_string("\n", vga_color(COLOR_BLACK, COLOR_WHITE));
+	printf("received Interrupt: %d\n", regs.int_no);
 }
