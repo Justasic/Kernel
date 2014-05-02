@@ -166,8 +166,9 @@ void vga_initialize(void)
 	// able to initialize and clear without
 	// initialization. So we check if we have
 	// already been initialized.
-	if (initialized != 0)
+	if (initialized == 0)
 	{
+		vga_write_string("Initialized VGA console.\n", vga_color(COLOR_BLACK, COLOR_WHITE));
 		print_color = vga_write_nstring;
 		initialized = 1;
 	}

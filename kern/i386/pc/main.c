@@ -17,6 +17,7 @@
 #include <string.h>
 #include <tty/vga_terminal.h>
 #include <lib/panic.h>
+#include <stdlib.h>
 
 #ifdef __LINUX__
 # warning "This kernel is being compiled with a non-cross-compiler!"
@@ -52,8 +53,9 @@ void kern_start(uint32_t esp)
 	vga_initialize();
 	
 	// Logo! :D
-	vga_write_string("Welcome to the Bnyeh Kernel!\n", vga_color(COLOR_BLACK, COLOR_WHITE));
-	vga_write_string(
+	printf("Welcome to the Bnyeh Kernel!\n");
+	printcf(
+		vga_color(COLOR_BLACK, COLOR_GREEN),
 		" ____                            __         \n"
 		"/\\  _`\\                         /\\ \\        \n"
 		"\\ \\ \\L\\ \\    ___   __  __     __\\ \\ \\___    \n"
@@ -62,20 +64,31 @@ void kern_start(uint32_t esp)
 		"   \\ \\____/\\ \\_\\ \\_\\/`____ \\ \\____\\\\ \\_\\ \\_\\\n"
 		"    \\/___/  \\/_/\\/_/`/___/> \\/____/ \\/_/\\/_/\n"
 		"                       /\\___/               \n"
-		"                       \\/__/                \n\n",
-		vga_color(COLOR_BLACK, COLOR_GREEN)
+		"                       \\/__/                \n\n"
 	);
 	
+	// Install our interrupt handler so we can handle
+	// CPU events properly.
 	initialize_descriptor_tables();
 	
-	vga_write_string("Hello World Test :D!\n", vga_color(COLOR_BLACK, COLOR_WHITE));
-	vga_write_string("This is a red string!\n", vga_color(COLOR_BLACK, COLOR_LIGHT_RED));
+	// Bleh messages to make sure everything is working properly.
+	printf("Hello World Test :D!\n");
+	printcf(vga_color(COLOR_BLACK, COLOR_LIGHT_RED), "This is a red string!\n");
 	vga_write_rstring("FUCKIN RAINBOW!\n");
-		
+	
+	// Test interrupts, will be removed later.
 	__asm__ __volatile__ ("int $0x3");
 	__asm__ __volatile__ ("int $0x4"); 
 	
-	vga_write_string("Derp derp\n",  vga_color(COLOR_BLACK, COLOR_WHITE));
+	// Test printf, will be removed later.
+	int i = printf("Test Printf!\n");
+	printf("Previous printf returned %d\n", i);
+	
+	vga_write_string("Printf returned ", vga_color(COLOR_BLACK, COLOR_LIGHT_RED));
+	char buf[32];
+	vga_write_string(itoa(buf, i), vga_color(COLOR_BLACK, COLOR_LIGHT_RED));
+	vga_write_string("\n", vga_color(COLOR_BLACK, COLOR_LIGHT_RED));
+// 	vga_write_string("Derp derp\n",  vga_color(COLOR_BLACK, COLOR_WHITE));
 	
 // 	panic("Kernel Execution End.");
 }

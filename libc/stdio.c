@@ -34,46 +34,98 @@
 void (*print_color)(const char *, size_t len, vga_color_t color);
 
 // Print formatted
+___ATTRIB_FORMAT__(1, 2)
 int printf(const char *fmt, ...)
 {
 	// Call vsnprintf instead of decoding here, saves function calls.
-// 	vsnprintf(char *str, size_t size, const char *format, va_list ap)
 	if (!print_color)
 		return -1;
 	
 	// guess memory size.
-	size_t newlen = strlen(fmt) * 2;
-	char *str = malloc(newlen);
+// 	size_t newlen = strlen(fmt) * 2;
+// 	char *str = malloc(newlen);
+	// FIXME: Since we don't quite have memory allocation yet,
+	// allocate a buffer on the stack which will handle *MOST*
+	// printf messages BUT NOT ALL!
+	char str[(1 << 16)]; // 65536 chars
 	
 	va_list ap;
 	va_start(ap, fmt);
 	
-	vsnprintf(str, newlen, fmt, ap);
+	//vsnprintf(str, newlen, fmt, ap);
+	int ret = vsnprintf(str, sizeof(str), fmt, ap);
 	
 	va_end(ap);
 	
-	if (!print_color)
-		print_color(str, newlen, vga_color(COLOR_BLACK, COLOR_WHITE));
-		
-	free(str);
+	// NOTE: we use ret here instead of sizeof(str) otherwise we're going
+	// to basically start catting our kernel .text segment to the terminal
+	// (which is nice and all but we just wanted to say hello world..)
+	if (print_color)
+// 		print_color(str, newlen, vga_color(COLOR_BLACK, COLOR_WHITE));
+		print_color(str, ret, vga_color(COLOR_BLACK, COLOR_WHITE));
+	
+	return ret;
+// 	free(str);
 }
 
 // Print formatted color
-int printcf(const char *fmt, uint32_t color, ...)
+___ATTRIB_FORMAT__(2, 3)
+int printcf(uint32_t color, const char *fmt, ...)
 {
+	// Call vsnprintf instead of decoding here, saves function calls.
+	if (!print_color)
+		return -1;
 	
+	// guess memory size.
+	// 	size_t newlen = strlen(fmt) * 2;
+	// 	char *str = malloc(newlen);
+	// FIXME: Since we don't quite have memory allocation yet,
+	// allocate a buffer on the stack which will handle *MOST*
+	// printf messages BUT NOT ALL!
+	char str[(1 << 16)]; // 65536 chars
+	
+	va_list ap;
+	va_start(ap, fmt);
+	
+	//vsnprintf(str, newlen, fmt, ap);
+	int ret = vsnprintf(str, sizeof(str), fmt, ap);
+	
+	va_end(ap);
+	
+	// NOTE: we use ret here instead of sizeof(str) otherwise we're going
+	// to basically start catting our kernel .text segment to the terminal
+	// (which is nice and all but we just wanted to say hello world..)
+	if (print_color)
+// 		print_color(str, newlen, vga_color(COLOR_BLACK, COLOR_WHITE));
+		print_color(str, ret, color);
+	
+	return ret;
+// 	free(str);
 }
 
+___ATTRIB_FORMAT__(3, 4)
 int snprintf(char *str, size_t size, const char *format, ...)
 {
+	// Call vsnprintf instead of decoding here, saves function calls.
+	if (!str)
+		return -1;
 	
+	va_list ap;
+	va_start(ap, format);
+	
+	int ret = vsnprintf(str, size, format, ap);
+	
+	va_end(ap);
+	
+	return ret;
 }
 
 int vsprintf(char *str, const char *format, va_list ap)
 {
-	
+	// This requires malloc support.
 }
 
+___ATTRIB_FORMAT__(2, 3)
 int sprintf(char *str, const char *format, ...)
 {
 	// The joy of having our own Libc is that because we defined malloc,

@@ -27,6 +27,7 @@ extern char *index(const char *s, int c);
 extern char *rindex(const char *s, int c);
 extern char *strstr(const char *haystack, const char *needle);
 extern char *strncpy(char *dest, const char *src, size_t n);
+extern char *strcpy(char *dest, const char *src, size_t n);
 extern char *strrev(char *_str);
 extern char *strnrev(char *_str, size_t len);
 
@@ -39,5 +40,8 @@ extern void *memrev(void *dest, const void *src, size_t n);
 // extended libc funcs
 extern char *strtoupper(char *dest, const char *src);
 extern char *strtolower(char *dest, const char *src);
+
+// Posix extended funcs
+extern char *strerror(int errnum);
 
 #endif
