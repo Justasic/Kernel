@@ -198,9 +198,9 @@ char *strncpy(char *dest, const char *src, size_t n)
 	return dest;
 }
 
-char *strcpy(char *dest, const char *src, size_t n)
+char *strcpy(char *dest, const char *src)
 {
-	if (!dest || !src || !n)
+	if (!dest || !src)
 		return NULL;
 	// really, really cheap.
 	memcpy(dest, src, strlen(src));
