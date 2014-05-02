@@ -45,7 +45,6 @@
 		push $##x; \
 		jmp isr_stub;
 
-
 # Our common stub for all interrupts which will prepare us
 # to enter a C function to handle the interrupt.
 isr_stub:
@@ -55,7 +54,7 @@ isr_stub:
 	push %eax      # Push eax (data segment reg) to the stack
 	
 	# Load the kernel data segment descriptor
-	movw 0x10, %ax
+	movw $0x10, %ax
 	movw %ax, %ds
 	movw %ax, %es
 	movw %ax, %fs

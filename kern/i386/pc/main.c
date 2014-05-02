@@ -72,15 +72,10 @@ void kern_start(uint32_t esp)
 	vga_write_string("This is a red string!\n", vga_color(COLOR_BLACK, COLOR_LIGHT_RED));
 	vga_write_rstring("FUCKIN RAINBOW!\n");
 		
-	for (int i = 0; i < 0xFFFF0000; ++i)
-		; // Do something for a period of time... I need a sleep function.
-	
 	__asm__ __volatile__ ("int $0x3");
 	__asm__ __volatile__ ("int $0x4"); 
 	
 	vga_write_string("Derp derp\n",  vga_color(COLOR_BLACK, COLOR_WHITE));
-	for (int i = 0; i < 0xFFFF0000; ++i)
-		; // Do something for a period of time... I need a sleep function.
 	
 // 	panic("Kernel Execution End.");
 }
