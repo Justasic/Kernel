@@ -145,6 +145,9 @@ int vsnprintf(char *str, size_t size, const char *fmt, va_list ap)
 			case 'u':
 				radix = 10;
 				goto DO_NUM;
+			case 'b':
+				radix = 2;
+				goto DO_NUM;
 			case 'o':
 				radix = 8;
 				/* load the value to be printed. l=long=32 bits: */
@@ -198,6 +201,10 @@ int vsnprintf(char *str, size_t size, const char *fmt, va_list ap)
 				*where = (unsigned char)va_arg(ap, int);
 				actual_wd = 1;
 				goto EMIT2;
+			case 'y':
+				num = va_arg(ap, unsigned long);
+				where = (num % 2) ? "true" : "false";
+				goto EMIT;
 			case 's':
 				/* disallow pad-left-with-zeroes for %s */
 				flags &= ~PR_LZ;

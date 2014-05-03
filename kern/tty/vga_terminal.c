@@ -22,6 +22,7 @@ static uint16_t *vidmem = (uint16_t *) 0xB8000;
 
 // These are global string printing driver interfaces, required when initializing our terminal here
 extern void (*print_color)(const char *, size_t len, vga_color_t color);
+extern void (*print_rainbow)(const char *str, size_t len);
 
 // The current columns and rows in the terminal.
 uint8_t row;
@@ -135,8 +136,10 @@ void vga_write_rnstring(const char *str, size_t len)
 	for (size_t i = 0; i < len; ++i)
 	{
 		size_t co = i % COLOR_WHITE;
-		if (co == COLOR_DARK_GREY || co == COLOR_LIGHT_BROWN || co == COLOR_BLACK)
-			co = COLOR_LIGHT_MAGENTA; // Just a random color.
+// 		if (co == COLOR_DARK_GREY || co == COLOR_LIGHT_BROWN)
+// 			co += 2;
+		if (co == COLOR_BLACK)
+			co++; // Just a random color.
 			
 		// if it's an ascii charactor
 		if (str[i] >= ' ')
@@ -170,6 +173,7 @@ void vga_initialize(void)
 	{
 		vga_write_string("Initialized VGA console.\n", vga_color(COLOR_BLACK, COLOR_WHITE));
 		print_color = vga_write_nstring;
+		print_rainbow = vga_write_rnstring;
 		initialized = 1;
 	}
 }

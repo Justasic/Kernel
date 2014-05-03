@@ -28,5 +28,22 @@ void initialize_descriptor_tables(void)
 
 void isr_handler(registers_t regs)
 {
+	
 	printf("received Interrupt: %d\n", regs.int_no);
+}
+
+void irq_handler(registers_t regs)
+{
+	// err_code is the IRQ number.
+	printf("Received IRQ: %d\n", regs.int_no);
+}
+
+void common_handler(registers_t regs)
+{
+	// Because I use the interrupt handler for the same as the
+	// IRQ handler, we have to handle it here in C.
+	if (regs.is_irq == 1)
+		isr_handler(regs);
+	else
+		irq_handler(regs);
 }

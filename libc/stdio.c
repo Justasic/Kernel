@@ -32,6 +32,7 @@
 // This is defined to allow for re-initialization by a better driver later in
 // the kernel init stages.
 void (*print_color)(const char *, size_t len, vga_color_t color);
+void (*print_rainbow)(const char *str, size_t len);
 
 // Print formatted
 ___ATTRIB_FORMAT__(1, 2)
@@ -62,7 +63,7 @@ int printf(const char *fmt, ...)
 	// (which is nice and all but we just wanted to say hello world..)
 	if (print_color)
 // 		print_color(str, newlen, vga_color(COLOR_BLACK, COLOR_WHITE));
-		print_color(str, ret, vga_color(COLOR_BLACK, COLOR_WHITE));
+		print_color(str, ret, vga_color(COLOR_BLACK, COLOR_LIGHT_GREY));
 	
 	return ret;
 // 	free(str);
@@ -101,6 +102,40 @@ int printcf(uint32_t color, const char *fmt, ...)
 	
 	return ret;
 // 	free(str);
+}
+
+// Print formatted rainbow
+___ATTRIB_FORMAT__(1, 2)
+int printrf(const char *fmt, ...)
+{
+	// Call vsnprintf instead of decoding here, saves function calls.
+	if (!print_rainbow)
+		return -1;
+	
+	// guess memory size.
+	// 	size_t newlen = strlen(fmt) * 2;
+	// 	char *str = malloc(newlen);
+	// FIXME: Since we don't quite have memory allocation yet,
+	// allocate a buffer on the stack which will handle *MOST*
+	// printf messages BUT NOT ALL!
+	char str[(1 << 16)]; // 65536 chars
+	
+	va_list ap;
+	va_start(ap, fmt);
+	
+	//vsnprintf(str, newlen, fmt, ap);
+	int ret = vsnprintf(str, sizeof(str), fmt, ap);
+	
+	va_end(ap);
+	
+	// NOTE: we use ret here instead of sizeof(str) otherwise we're going
+	// to basically start catting our kernel .text segment to the terminal
+	// (which is nice and all but we just wanted to say hello world..)
+	if (print_rainbow)
+		print_rainbow(str, ret);
+	
+	return ret;
+	// 	free(str);
 }
 
 ___ATTRIB_FORMAT__(3, 4)

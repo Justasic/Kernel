@@ -23,6 +23,7 @@
 
 
 ___ATTRIB_FORMAT__(1, 2) extern int printf(const char *, ...);
+___ATTRIB_FORMAT__(1, 2) extern int printrf(const char *fmt, ...);
 ___ATTRIB_FORMAT__(2, 3) extern int printcf(uint32_t color, const char *fmt, ...);
 ___ATTRIB_FORMAT__(2, 3) extern int sprintf(char *str, const char *format, ...);
 ___ATTRIB_FORMAT__(3, 4) extern int snprintf(char *str, size_t size, const char *format, ...);

@@ -30,6 +30,7 @@
 	isr##x: \
 		cli; \
 		push $0; \
+		push $0; \
 		push $##x; \
 		jmp isr_stub;
 
@@ -42,9 +43,19 @@
 	.globl isr##x; \
 	isr##x: \
 		cli; \
+		push $0; \
 		push $##x; \
 		jmp isr_stub;
-
+		
+#define IRQ(x, y) \
+	.globl irq##x; \
+	irq##x: \
+		cli; \
+		push $0; \
+		push $1; \
+		push $##y; \
+		jmp isr_stub;
+		
 # Our common stub for all interrupts which will prepare us
 # to enter a C function to handle the interrupt.
 isr_stub:
@@ -61,7 +72,7 @@ isr_stub:
 	movw %ax, %gs
 	
 	# Jump to C and handle the interrupt
-	call isr_handler
+	call common_handler
 	
 	# Restore original data segment descriptor
 	pop %eax
@@ -78,7 +89,7 @@ isr_stub:
 	sti
 	# Return to where we were when interrupt was called
 	iret
-
+	
 # Interrupts 0-18
 #
 #
@@ -137,6 +148,25 @@ ISR_NOERRORCODE(28)
 ISR_NOERRORCODE(29)
 ISR_NOERRORCODE(30)
 ISR_NOERRORCODE(31)
+
+# Interrupt requests
+IRQ(0, 32)
+IRQ(1, 33)
+IRQ(2, 34)
+IRQ(3, 35)
+IRQ(4, 36)
+IRQ(5, 37)
+IRQ(6, 38)
+IRQ(7, 39)
+IRQ(8, 40)
+IRQ(9, 41)
+IRQ(10, 42)
+IRQ(11, 43)
+IRQ(12, 44)
+IRQ(13, 45)
+IRQ(14, 46)
+IRQ(15, 47)
+
 	
 
 	

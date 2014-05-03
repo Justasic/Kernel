@@ -131,13 +131,6 @@ void init_gdt(void)
 	gdt_entries[4].big = 1;
 	gdt_entries[4].gran = 1;
 	gdt_entries[4].base_high = 0;
-
-	
-// 	gdt_set_gate(0, 0, 0, 0, 0);                
-// 	gdt_set_gate(1, 0, 0xFFFFFFFF, 0x9A, 0xCF); 
-// 	gdt_set_gate(2, 0, 0xFFFFFFFF, 0x92, 0xCF); 
-// 	gdt_set_gate(3, 0, 0xFFFFFFFF, 0xFA, 0xCF); 
-// 	gdt_set_gate(4, 0, 0xFFFFFFFF, 0xF2, 0xCF); 
 	
 	gdt_flush((uint32_t)&gdt_ptr);
 }
