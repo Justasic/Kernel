@@ -13,10 +13,30 @@
  * CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
  */
 
-#ifndef __KPANIC_H__
-#define __KPANIC_H__
-#include "lib/common.h"
+#ifndef __KISR_H__
+#define __KISR_H__
 
-extern void panic(char *err, registers_t *regs);
+enum
+{
+	IRQ0 = 32,
+	IRQ1,
+	IRQ2,
+	IRQ3,
+	IRQ4,
+	IRQ5,
+	IRQ6,
+	IRQ7,
+	IRQ8,
+	IRQ9,
+	IRQ10,
+	IRQ11,
+	IRQ12,
+	IRQ13,
+	IRQ14,
+	IRQ15,
+};
 
-#endif // __KPANIC_H__
+typedef void (*isr_t)(registers_t);
+void register_interrupt_handler(uint8_t n, isr_t handler);
+
+#endif // __KISR_H__

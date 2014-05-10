@@ -16,10 +16,13 @@
 #include <stdio.h>
 #include <string.h>
 #include <stdlib.h>
+#include <stddef.h>
 
 #include "lib/panic.h"
+#include "lib/common.h"
 #include "tty/vga_terminal.h"
 #include "i386/pc/cpuid.h"
+#include "i386/pc/timer.h"
 
 #ifdef __LINUX__
 # warning "This kernel is being compiled with a non-cross-compiler!"
@@ -76,14 +79,19 @@ void kern_start(uint32_t esp)
 	// CPU events properly.
 	initialize_descriptor_tables();
 	
-	// Test interrupts, will be removed later.
-	__asm__ __volatile__ ("int $0x3");
-	__asm__ __volatile__ ("int $0x4"); 
-	
 	// Test printf, will be removed later.
 	int i = printf("Test Printf!\n");
 	printf("Previous printf returned %d\n", i);
 	
-// 	panic("Kernel Execution End.");
+	// Re-enable interrupts
+// 	ExitCriticalSection();
+	
+// 	__asm__ __volatile__("int $0x80");
+	
+	// Initialize the Programmable Interrupt Timer at 50Hz
+// 	init_PIT(50);
+
+	
+	panic("Kernel Execution End.", NULL);
 }
 

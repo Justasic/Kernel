@@ -20,5 +20,9 @@
 
 #define MAXFLOAT      3.40282347e+38F
 
+#define UINTMAX       ((1 << sizeof(unsigned int)) - 1)
+#define INTMAX        ((1 << sizeof(int)) - 1)
+// #define UINTMAX       ((1 << sizeof(unsigned int)) - 1)
+
 
 #endif // __LIMITS_H__

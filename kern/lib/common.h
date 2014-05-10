@@ -24,8 +24,8 @@ extern uint16_t inw(uint16_t port);
 // -- Critical Section definitions
 // First disables all maskable interrupts
 // the second re-enables them
-inline void EnterCriticalSection(void) { __asm__ __volatile__("cli"); }
-inline void ExitCriticalSection(void)  { __asm__ __volatile__("sti"); }
+static inline void EnterCriticalSection(void) { __asm__ __volatile__("cli"); }
+static inline void ExitCriticalSection(void)  { __asm__ __volatile__("sti"); }
 
 // -- Registers struct.
 typedef struct registers
@@ -34,6 +34,6 @@ typedef struct registers
 	uint32_t edi, esi, ebp, esp, ebx, edx, ecx, eax; // Pushed by pusha.
 	uint32_t int_no, is_irq, err_code;    // Interrupt number,  error code (if applicable)
 	uint32_t eip, cs, eflags, useresp, ss; // Pushed by the processor automatically.
-} registers_t; 
+} registers_t;
 
 #endif // __KCOMMON_H__

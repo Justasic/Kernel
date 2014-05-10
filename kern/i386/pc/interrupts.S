@@ -56,6 +56,7 @@
 		push $##y; \
 		jmp isr_stub;
 		
+
 # Our common stub for all interrupts which will prepare us
 # to enter a C function to handle the interrupt.
 isr_stub:
@@ -148,6 +149,9 @@ ISR_NOERRORCODE(28)
 ISR_NOERRORCODE(29)
 ISR_NOERRORCODE(30)
 ISR_NOERRORCODE(31)
+
+# Syscall interrupt
+ISR_NOERRORCODE(80)
 
 # Interrupt requests
 IRQ(0, 32)

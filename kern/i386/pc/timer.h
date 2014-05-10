@@ -13,10 +13,5 @@
  * CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
  */
 
-#ifndef __KPANIC_H__
-#define __KPANIC_H__
-#include "lib/common.h"
-
-extern void panic(char *err, registers_t *regs);
-
-#endif // __KPANIC_H__
+#include <stdint.h>
+extern void init_PIT(uint32_t freq);

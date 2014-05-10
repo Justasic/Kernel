@@ -17,10 +17,13 @@
 #include "common.h"
 #include <stdio.h>
 #include <stdint.h>
+#include <tty/vga_terminal.h>
+
+// static registers_t regs;
 
 // Naked function so we can dump registers without
 // the compiler modifying them before we can dump.
-void __attribute__((naked)) panic(char *err)
+void __attribute__((naked)) panic(char *err, registers_t *regs)
 {
 	// There's probably a way to use pusha, pushf, and some
 	// other opcodes to push all these to the stack and then
@@ -51,17 +54,20 @@ void __attribute__((naked)) panic(char *err)
 	// call the print functions to dump those registers to the terminal.
 	printcf(vga_color(COLOR_BLACK, COLOR_LIGHT_RED), "PANIC! %s\n", err);
 	
-#if 0
-	// Print the registers
-	printf("\nRegisters:\n");
-	printf(" eax: ................. %x\n ebx: ................. %x\n ecx: ................. %x\n", regs.eax, regs.ebx, regs.ecx);
-	printf(" edx: ................. %x\n esp: ................. %x\n ebp: ................. %x\n", regs.edx, regs.esp, regs.ebp);
-	printf(" eip: ................. %x\n cr0: ................. %x\n cr3: ................. %x\n", regs.eip, cr0, cr3);
-	printf(" Interrupt Number: .... %x\n", regs.int_no);
-	printf(" Error Code: .......... %x\n", regs.err_code);
-	printf(" EFLAGS: .............. %x\n", regs.eflags);
-	printf(" User ESP: ............ %x\n", regs.useresp);
-#endif
+	if (regs)
+	{
+		uint32_t cr0 = 0, cr3 = 0;
+		// Print the registers
+		printf("\nRegisters:\n");
+		printf(" eax: ................. %x\n ebx: ................. %x\n ecx: ................. %x\n", regs->eax, regs->ebx, regs->ecx);
+		printf(" edx: ................. %x\n esp: ................. %x\n ebp: ................. %x\n", regs->edx, regs->esp, regs->ebp);
+		printf(" eip: ................. %x\n cr0: ................. %x\n cr3: ................. %x\n", regs->eip, cr0, cr3);
+		printf(" Interrupt Number: .... %x\n", regs->int_no);
+		printf(" Interrupt Type: ...... %x\n", regs->is_irq);
+		printf(" Error Code: .......... %x\n", regs->err_code);
+		printf(" EFLAGS: .............. %x\n", regs->eflags);
+		printf(" User ESP: ............ %x\n", regs->useresp);
+	}
 	
 	// Print a stack trace so we know wtf is going on
 	printf("\n\nStack Trace:\n");

@@ -12,32 +12,41 @@
  * IN AN ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF OR IN
  * CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
  */
-#include <lib/common.h>
-#include <stdlib.h>
+#include <stdint.h>
 #include <stdio.h>
+#include "lib/common.h"
+#include "i386/pc/isr.h"
 
-extern void init_gdt(void);
-extern void init_idt(void);
-void initialize_descriptor_tables(void)
+isr_t interrupt_handlers[256];
+
+void register_interrupt_handler(uint8_t n, isr_t handler)
 {
-	printf("Installing Global Descriptor Table\n");
-	init_gdt();
-	printf("Installing Interrupt Descriptor Table\n");
-	init_idt();
+	printf("Installing interrupt handler %d\n", n);
+	interrupt_handlers[n] = handler;
 }
 
-extern void irq_handler(registers_t regs);
-extern void isr_handler(registers_t regs);
-
-void common_handler(registers_t regs)
+void irq_handler(registers_t regs)
 {
-	printf("Received interrupt: %d\n", regs.is_irq);
-	// Because I use the interrupt handler for the same as the
-	// IRQ handler, we have to handle it here in C.
-	if (!regs.is_irq)
-		isr_handler(regs);
-	else
-		irq_handler(regs);
+	// err_code is the IRQ number.
+	printf("Received IRQ: %d\n", regs.int_no);
+	
+	// Send an EOI (end of interrupt) signal to the PICs.
+	// If this interrupt involved the slave.
+	if (regs.int_no >= 40)
+	{
+		// Send reset signal to slave.
+		outb(0xA0, 0x20);
+	}
+	
+	// Send reset signal to master. (As well as slave, if necessary).
+	outb(0x20, 0x20);
+	
+	if (interrupt_handlers[regs.int_no] != 0)
+	{
+		printf("Calling IRQ handler for IRQ %d\n", regs.int_no);
+		isr_t handler = interrupt_handlers[regs.int_no];
+		handler(regs);
+	}
 	for(int i = 0; i < 10000; ++i)
 		++i;
 }
