@@ -17,6 +17,7 @@
 #include "common.h"
 #include <stdio.h>
 #include <stdint.h>
+#include <stdarg.h>
 #include <tty/vga_terminal.h>
 
 // static registers_t regs;
@@ -41,7 +42,8 @@ void PrintStackTrace(unsigned int MaxFrames)
 
 // Naked function so we can dump registers without
 // the compiler modifying them before we can dump.
-__attribute__((noreturn)) void panic(char *err, registers_t *regs)
+___ATTRIB_FORMAT__(2, 3)
+void panic(registers_t *regs, char *err, ...)
 {
 	// There's probably a way to use pusha, pushf, and some
 	// other opcodes to push all these to the stack and then
@@ -68,11 +70,18 @@ __attribute__((noreturn)) void panic(char *err, registers_t *regs)
 	);
 #endif
 	// First, clear the screen.
-	vga_clear();
+// 	vga_clear();
+	
+	// COnvert the arguments to a nice formatted message
+	va_list ap;
+	char buf[(1 << 11)];
+	va_start(ap, err);
+	vsnprintf(buf, sizeof(buf), err, ap);
+	va_end(ap);
 	
 	// Now that we're safe from register clobbering from function calls, we can
 	// call the print functions to dump those registers to the terminal.
-	printcf(vga_color(COLOR_BLACK, COLOR_LIGHT_RED), "PANIC! %s\n", err);
+	printcf(vga_color(COLOR_BLACK, COLOR_LIGHT_RED), "PANIC! %s\n", buf);
 	
 	// If we have registers to print (which we likely will) then dump them
 	if (regs)

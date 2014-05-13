@@ -55,6 +55,10 @@ SECTIONS
 		*(.bootstrap_stack)
 	}
 	
+	/* used to find the end of the binary so we can start memory
+	 * allocation after this point. This is later used in kmemory.c */
+	bin_end = .;
+	
 	/* The compiler may produce other sections, by default it will put them in
 	 *   a segment with the same name. Simply add stuff here as needed. */
 }

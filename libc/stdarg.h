@@ -36,4 +36,7 @@ typedef __builtin_va_list __gnuc_va_list;
 
 typedef __gnuc_va_list va_list;
 
+// Additional define to make argument-based warnings easier
+#define ___ATTRIB_FORMAT__(x, y) __attribute__((format(printf, x, y)))
+
 #endif

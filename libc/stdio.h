@@ -19,9 +19,6 @@
 #include "stdint.h"
 #include <tty/vga_terminal.h>
 
-#define ___ATTRIB_FORMAT__(x, y) __attribute__((format(printf, x, y)))
-
-
 ___ATTRIB_FORMAT__(1, 2) extern int printf(const char *, ...);
 ___ATTRIB_FORMAT__(1, 2) extern int printrf(const char *fmt, ...);
 ___ATTRIB_FORMAT__(2, 3) extern int printcf(uint32_t color, const char *fmt, ...);

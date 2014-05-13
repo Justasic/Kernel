@@ -12,13 +12,20 @@
  * IN AN ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF OR IN
  * CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
  */
+#ifndef __KFRAME_H__
+#define __KFRAME_H__
 
-#ifndef __KPANIC_H__
-#define __KPANIC_H__
-#include "lib/common.h"
-#include <stdarg.h>
+#include <stdint.h>
+#include <stddef.h>
+#include <stdbool.h>
+#include "lib/paging.h"
 
-___ATTRIB_FORMAT__(2, 3)
-extern void panic(registers_t *regs, char *err, ...);
+// Macros used in the bitset algorithms.
+#define INDEX_FROM_BIT(a) (a / (8 * 4))
+#define OFFSET_FROM_BIT(a) (a % (8 * 4))
 
-#endif // __KPANIC_H__
+extern void alloc_frame(page_t *page, bool is_kernel, bool is_writeable);
+extern void free_frame(page_t *page);
+
+
+#endif // __KFRAME_H__

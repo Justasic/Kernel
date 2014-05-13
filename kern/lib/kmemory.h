@@ -12,13 +12,14 @@
  * IN AN ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF OR IN
  * CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
  */
+#ifndef __KMEMORY_H__
+#define __KMEMORY_H__
+#include <stdint.h>
 
-#ifndef __KPANIC_H__
-#define __KPANIC_H__
-#include "lib/common.h"
-#include <stdarg.h>
+// malloc functions.
+extern void *kalloc(size_t sz);
+extern void *kalloc_align(size_t sz);
+extern void *kalloc_phys(size_t sz, uint32_t *phys);
+extern void *kalloc_align_phys(size_t sz, uint32_t *phys);
 
-___ATTRIB_FORMAT__(2, 3)
-extern void panic(registers_t *regs, char *err, ...);
-
-#endif // __KPANIC_H__
+#endif // __KMEMORY_H__

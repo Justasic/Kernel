@@ -20,6 +20,8 @@
 
 #include "lib/panic.h"
 #include "lib/common.h"
+#include "lib/kmemory.h"
+#include "lib/paging.h"
 #include "tty/vga_terminal.h"
 #include "i386/pc/cpuid.h"
 #include "i386/pc/timer.h"
@@ -60,7 +62,6 @@ void kern_start(uint32_t esp)
 	// Logo! :D
 	printf("Welcome to the Bnyeh Kernel!\n");
 	printrf(
-// 		vga_color(COLOR_BLACK, COLOR_GREEN),
 		" ____                            __         \n"
 		"/\\  _`\\                         /\\ \\        \n"
 		"\\ \\ \\L\\ \\    ___   __  __     __\\ \\ \\___    \n"
@@ -79,6 +80,9 @@ void kern_start(uint32_t esp)
 	// CPU events properly.
 	initialize_descriptor_tables();
 	
+	// Initialize the paging system
+	initialize_paging();
+	
 	// Test printf, will be removed later.
 	int i = printf("Test Printf!\n");
 	printf("Previous printf returned %d\n", i);
@@ -86,10 +90,15 @@ void kern_start(uint32_t esp)
 	// Re-enable interrupts
 	ExitCriticalSection();
 	
+	// Test our interrupt
 	__asm__ __volatile__("int $0x80");
 	
 	// Initialize the Programmable Interrupt Timer at 50Hz
 	init_PIT(50);
+	
+	uint32_t *ptr = (uint32_t*)0xA0000000;
+	uint32_t fault = *ptr;
+	(void)fault;
 	
 	// Idle loop to make sure we don't leave
 	// the function and halt the CPU

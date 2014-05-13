@@ -47,14 +47,12 @@ void isr_handler(registers_t regs)
 	switch (regs.int_no)
 	{
 		case DIVISION_BY_ZERO:
-			prnt(DIVISION_BY_ZERO);
 			panic("Kernel attempted to end the world with a division by zero which was saved by the CPU.", &regs);
 			break;
 		case DEBUG_EXCEPTION:
 			prnt(DEBUG_EXCEPTION);
 			break;
 		case NON_MASKABLE_INTERRUPT:
-			prnt(NON_MASKABLE_INTERRUPT);
 			panic("Non-maskable interrupt caught by CPU.", &regs);
 			break;
 		case BREAKPOINT_EXCEPTION:
@@ -64,22 +62,18 @@ void isr_handler(registers_t regs)
 			prnt(INTRO_DETECTION);
 			break;
 		case OUT_OF_BOUNDS_EXCEPTION:
-			prnt(OUT_OF_BOUNDS_EXCEPTION);
 			panic("The kernel tried to leave the playground and the CPU said \"NO! >:(\" (Out-of-bounds Exception)", &regs);
 			break;
 		case INVALID_OPCODE:
-			prnt(INVALID_OPCODE);
 			panic("Invalid Opcode exception caught by CPU.", &regs);
 			break;
 		case NO_COPROCESSOR:
 			prnt(NO_COPROCESSOR);
 			break;
 		case DOUBLE_FAULT:
-			prnt(DOUBLE_FAULT);
 			panic("Double fault caught by CPU.", &regs);
 			break;
 		case COPROCESSOR_SEGMENT_OVERRUN:
-			prnt(COPROCESSOR_SEGMENT_OVERRUN);
 			panic("Co-Processor segment overrun caught by CPU.", &regs);
 			break;
 		case BAD_TSS:
@@ -89,19 +83,28 @@ void isr_handler(registers_t regs)
 			prnt(SEGMENT_NOT_PRESENT);
 			break;
 		case STACK_FAULT:
-			prnt(STACK_FAULT);
-			panic("Stack Fault caught by CPU.", &regs);
+			panic(&regs, "Stack Fault caught by CPU.");
 			break;
 		case GENERAL_PROTECTION:
-			prnt(GENERAL_PROTECTION);
 			panic("General Protection Fault caught by CPU.", &regs);
 			break;
 		case PAGE_FAULT:
-			prnt(PAGE_FAULT);
-			panic("Page fault caught by CPU.", &regs);
+		{
+			// The faulting address is stored in the CR2 register.
+			uint32_t faulting_address;
+			__asm__ __volatile__("mov %%cr2, %0" : "=r" (faulting_address));
+			
+			// The error code gives us details of what happened.
+			int present   = !(regs.err_code & 0x1); // Page not present
+			int rw = regs.err_code & 0x2;           // Write operation?
+			int um = regs.err_code & 0x4;           // Processor was in user-mode?
+			int reserved = regs.err_code & 0x8;     // Overwritten CPU-reserved bits of page entry?
+			int id = regs.err_code & 0x10;          // Caused by an instruction fetch?
+			panic(&regs, "Page fault (User-mode: %b, read-only:"
+			"%b, page present: %b, reserved: %b) at 0x%X", um, rw, present, reserved);
 			break;
+		}
 		case UNKNOWN_INTERRUPT:
-			prnt(UNKNOWN_INTERRUPT);
 			panic("Unknown interrupt passed to CPU.", &regs);
 			break;
 		case COPROCESSOR_FAULT:
@@ -111,7 +114,6 @@ void isr_handler(registers_t regs)
 			prnt(ALIGNMENT_CHECK);
 			break;
 		case MACHINE_CHECK:
-			prnt(MACHINE_CHECK);
 			panic("Machine Check Exception caught by CPU.", &regs);
 			break;
 		case 0x80:
