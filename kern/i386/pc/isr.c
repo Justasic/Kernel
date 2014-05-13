@@ -76,7 +76,7 @@ void isr_handler(registers_t regs)
 			break;
 		case DOUBLE_FAULT:
 			prnt(DOUBLE_FAULT);
-// 			panic("Double fault caught by CPU.", &regs);
+			panic("Double fault caught by CPU.", &regs);
 			break;
 		case COPROCESSOR_SEGMENT_OVERRUN:
 			prnt(COPROCESSOR_SEGMENT_OVERRUN);

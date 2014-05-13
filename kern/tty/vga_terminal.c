@@ -49,7 +49,7 @@ static void _vgaScroll(void)
 		int i;
 		for (i = 0; i < (VGA_HEIGHT * VGA_WIDTH); i++)
 		{
-			vidmem[i] = vidmem[i+VGA_HEIGHT];
+			vidmem[i] = vidmem[i+VGA_WIDTH];
 		}
 		
 		// The last line should now be blank. Do this by writing
@@ -111,7 +111,7 @@ void vga_putc(char c, vga_color_t color)
 	if (column >= VGA_WIDTH)
 	{
 		column = 0;
-		row ++;
+		row++;
 	}
 	
 	// Scroll the screen if needed.

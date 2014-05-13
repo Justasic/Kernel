@@ -28,7 +28,7 @@ void register_interrupt_handler(uint8_t n, isr_t handler)
 void irq_handler(registers_t regs)
 {
 	// err_code is the IRQ number.
-	printf("Received IRQ: %d\n", regs.int_no);
+// 	printf("Received IRQ: %d\n", regs.int_no);
 	
 	// Send an EOI (end of interrupt) signal to the PICs.
 	// If this interrupt involved the slave.
@@ -43,7 +43,7 @@ void irq_handler(registers_t regs)
 	
 	if (interrupt_handlers[regs.int_no] != 0)
 	{
-		printf("Calling IRQ handler for IRQ %d\n", regs.int_no);
+// 		printf("Calling IRQ handler for IRQ %d\n", regs.int_no);
 		isr_t handler = interrupt_handlers[regs.int_no];
 		handler(regs);
 	}

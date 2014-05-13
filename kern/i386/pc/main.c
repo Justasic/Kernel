@@ -86,14 +86,13 @@ void kern_start(uint32_t esp)
 	// Re-enable interrupts
 	ExitCriticalSection();
 	
-// 	__asm__ __volatile__("int $0x3");
-	
 	__asm__ __volatile__("int $0x80");
 	
 	// Initialize the Programmable Interrupt Timer at 50Hz
 	init_PIT(50);
-
 	
-// 	panic("Kernel Execution End.", NULL);
+	// Idle loop to make sure we don't leave
+	// the function and halt the CPU
+	while(true) ;
 }
 
