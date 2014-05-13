@@ -84,14 +84,16 @@ void kern_start(uint32_t esp)
 	printf("Previous printf returned %d\n", i);
 	
 	// Re-enable interrupts
-// 	ExitCriticalSection();
+	ExitCriticalSection();
 	
-// 	__asm__ __volatile__("int $0x80");
+// 	__asm__ __volatile__("int $0x3");
+	
+	__asm__ __volatile__("int $0x80");
 	
 	// Initialize the Programmable Interrupt Timer at 50Hz
-// 	init_PIT(50);
+	init_PIT(50);
 
 	
-	panic("Kernel Execution End.", NULL);
+// 	panic("Kernel Execution End.", NULL);
 }
 

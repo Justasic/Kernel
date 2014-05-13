@@ -31,7 +31,7 @@ extern void isr_handler(registers_t regs);
 
 void common_handler(registers_t regs)
 {
-	printf("Received interrupt: %d\n", regs.is_irq);
+	printf("Received interrupt: 0x%X (%d)\n", regs.int_no, regs.int_no);
 	// Because I use the interrupt handler for the same as the
 	// IRQ handler, we have to handle it here in C.
 	if (!regs.is_irq)

@@ -78,6 +78,9 @@ extern void isr29 ();
 extern void isr30 ();
 extern void isr31 ();
 
+// Syscall interrupt
+extern void isr128();
+
 // IRQ interrupts
 extern void irq0 ();
 extern void irq1 ();
@@ -163,6 +166,8 @@ void init_idt(void)
 	set_gate(29);
 	set_gate(30);
 	set_gate(31);
+	
+	set_gate(128); // 0x80
 	
 	// Unrolled IRQ loop to initialize the IRQs
 	idt_set_gate(32, (uint32_t)irq0, 0x08, 0x8E);

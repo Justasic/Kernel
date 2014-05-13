@@ -84,8 +84,8 @@ isr_stub:
 
 	# Pop all registers -- restore previous registers
 	popa
-	# Cleans up pushed error code and pushed interrupt number
-	addl $8, %esp
+	# Cleans up pushed error code and pushed interrupt number AND the 'boolean' value for whether it's an IRQ or not
+	addl $12, %esp
 	# Re-enable interrupts
 	sti
 	# Return to where we were when interrupt was called
@@ -150,8 +150,8 @@ ISR_NOERRORCODE(29)
 ISR_NOERRORCODE(30)
 ISR_NOERRORCODE(31)
 
-# Syscall interrupt
-ISR_NOERRORCODE(80)
+# Syscall interrupt -- 0x80
+ISR_NOERRORCODE(128) 
 
 # Interrupt requests
 IRQ(0, 32)
@@ -170,7 +170,3 @@ IRQ(12, 44)
 IRQ(13, 45)
 IRQ(14, 46)
 IRQ(15, 47)
-
-	
-
-	

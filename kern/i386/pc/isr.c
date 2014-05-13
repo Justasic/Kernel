@@ -94,7 +94,7 @@ void isr_handler(registers_t regs)
 			break;
 		case GENERAL_PROTECTION:
 			prnt(GENERAL_PROTECTION);
-// 			panic("General Protection Fault caught by CPU.", &regs);
+			panic("General Protection Fault caught by CPU.", &regs);
 			break;
 		case PAGE_FAULT:
 			prnt(PAGE_FAULT);
