@@ -16,6 +16,12 @@
 #define __KCOMMON_H__
 #include <stdint.h>
 
+// Attribute definitions
+#define __noreturn __attribute__((noreturn))
+#define __naked    __attribute__((naked))
+#define __packed   __attribute__((packed))
+
+
 // -- I/O Bus communication functions.
 extern void outb(uint16_t port, uint8_t value);
 extern uint8_t inb(uint16_t port);

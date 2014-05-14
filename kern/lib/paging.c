@@ -55,17 +55,17 @@ void initialize_paging(void)
 	while (i < placement_addr)
 	{
 		// Kernel code is readable but not writeable from userspace.
-		alloc_frame(get_page(i, 1, kern_directory), 0, 0);
+		AllocFrame(GetPage(i, 1, kern_directory), 0, 0);
 		i += 0x1000;
 	}
 	
 	printf("Initializing paging\n");
 
 	// Now, enable paging!
-	switch_page_directory(kern_directory);
+	SwitchPagingDirectory(kern_directory);
 }
 
-void switch_page_directory(page_directory_t *dir)
+void SwitchPagingDirectory(page_directory_t *dir)
 {
 	cur_directory = dir;
 	uint32_t cr0;
@@ -75,7 +75,15 @@ void switch_page_directory(page_directory_t *dir)
 	__asm__ __volatile__("mov %0, %%cr0":: "r"(cr0));
 }
 
-page_t *get_page(uint32_t address, int make, page_directory_t *dir)
+void DisablePaging(void)
+{
+	uint32_t cr0;
+	__asm__ __volatile__("mov %%cr0, %0": "=r"(cr0));
+	cr0 &= ~0x80000000; // Disable paging bit
+	__asm__ __volatile__("mov %0, %%cr0":: "r"(cr0));
+}
+
+page_t *GetPage(uint32_t address, int make, page_directory_t *dir)
 {
 	// Turn the address into an index.
 	address /= 0x1000;

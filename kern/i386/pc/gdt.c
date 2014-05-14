@@ -14,6 +14,7 @@
  */
 #include <stdint.h>
 #include <string.h>
+#include "lib/common.h"
 
 // This structure contains the value of one GDT entry.
 // We use the attribute 'packed' to tell GCC not to change
@@ -37,13 +38,13 @@ struct gdt_entry_s
 	unsigned int big :1; //32bit opcodes for code, dword stack for data
 	unsigned int gran :1; //1 to use 4k page addressing, 0 for byte addressing
 	unsigned int base_high :8;
-} __attribute__((packed));
+} __packed;
 
 struct gdt_ptr_s
 {
 	uint16_t limit;               // The upper 16 bits of all selector limits.
 	uint32_t base;                // The address of the first gdt_entry_t struct.
-} __attribute__((packed));
+} __packed;
 
 typedef struct gdt_ptr_s gdt_ptr_t; 
 typedef struct gdt_entry_s gdt_entry_t;

@@ -83,10 +83,6 @@ void kern_start(uint32_t esp)
 	// Initialize the paging system
 	initialize_paging();
 	
-	// Test printf, will be removed later.
-	int i = printf("Test Printf!\n");
-	printf("Previous printf returned %d\n", i);
-	
 	// Re-enable interrupts
 	ExitCriticalSection();
 	
@@ -94,7 +90,16 @@ void kern_start(uint32_t esp)
 	__asm__ __volatile__("int $0x80");
 	
 	// Initialize the Programmable Interrupt Timer at 50Hz
-	init_PIT(50);
+	init_PIT(100);
+	
+	// poor-man's sleep
+	extern uint32_t tick;
+	// wait 4 seconds
+	uint32_t nexttick = tick+400;
+	while (tick <= nexttick)
+		;
+	
+	printf("\nDone waiting!\n");
 	
 	uint32_t *ptr = (uint32_t*)0xA0000000;
 	uint32_t fault = *ptr;

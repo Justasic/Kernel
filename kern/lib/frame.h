@@ -24,8 +24,8 @@
 #define INDEX_FROM_BIT(a) (a / (8 * 4))
 #define OFFSET_FROM_BIT(a) (a % (8 * 4))
 
-extern void alloc_frame(page_t *page, bool is_kernel, bool is_writeable);
-extern void free_frame(page_t *page);
+extern void AllocFrame(page_t *page, bool is_kernel, bool is_writeable);
+extern void FreeFrame(page_t *page);
 
 
 #endif // __KFRAME_H__

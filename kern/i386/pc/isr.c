@@ -47,13 +47,13 @@ void isr_handler(registers_t regs)
 	switch (regs.int_no)
 	{
 		case DIVISION_BY_ZERO:
-			panic("Kernel attempted to end the world with a division by zero which was saved by the CPU.", &regs);
+			panic(&regs, "Kernel attempted to end the world with a division by zero which was saved by the CPU.");
 			break;
 		case DEBUG_EXCEPTION:
 			prnt(DEBUG_EXCEPTION);
 			break;
 		case NON_MASKABLE_INTERRUPT:
-			panic("Non-maskable interrupt caught by CPU.", &regs);
+			panic(&regs, "Non-maskable interrupt caught by CPU.");
 			break;
 		case BREAKPOINT_EXCEPTION:
 			prnt(BREAKPOINT_EXCEPTION);
@@ -62,19 +62,19 @@ void isr_handler(registers_t regs)
 			prnt(INTRO_DETECTION);
 			break;
 		case OUT_OF_BOUNDS_EXCEPTION:
-			panic("The kernel tried to leave the playground and the CPU said \"NO! >:(\" (Out-of-bounds Exception)", &regs);
+			panic(&regs, "The kernel tried to leave the playground and the CPU said \"NO! >:(\" (Out-of-bounds Exception)");
 			break;
 		case INVALID_OPCODE:
-			panic("Invalid Opcode exception caught by CPU.", &regs);
+			panic(&regs, "Invalid Opcode exception caught by CPU.");
 			break;
 		case NO_COPROCESSOR:
 			prnt(NO_COPROCESSOR);
 			break;
 		case DOUBLE_FAULT:
-			panic("Double fault caught by CPU.", &regs);
+			panic(&regs, "Double fault caught by CPU.");
 			break;
 		case COPROCESSOR_SEGMENT_OVERRUN:
-			panic("Co-Processor segment overrun caught by CPU.", &regs);
+			panic(&regs, "Co-Processor segment overrun caught by CPU.");
 			break;
 		case BAD_TSS:
 			prnt(BAD_TSS);
@@ -86,7 +86,7 @@ void isr_handler(registers_t regs)
 			panic(&regs, "Stack Fault caught by CPU.");
 			break;
 		case GENERAL_PROTECTION:
-			panic("General Protection Fault caught by CPU.", &regs);
+			panic(&regs, "General Protection Fault caught by CPU.");
 			break;
 		case PAGE_FAULT:
 		{
@@ -101,11 +101,11 @@ void isr_handler(registers_t regs)
 			int reserved = regs.err_code & 0x8;     // Overwritten CPU-reserved bits of page entry?
 			int id = regs.err_code & 0x10;          // Caused by an instruction fetch?
 			panic(&regs, "Page fault (User-mode: %b, read-only:"
-			"%b, page present: %b, reserved: %b) at 0x%X", um, rw, present, reserved);
+			"%b, page present: %b, reserved: %b) at 0x%X", um, rw, present, reserved, faulting_address);
 			break;
 		}
 		case UNKNOWN_INTERRUPT:
-			panic("Unknown interrupt passed to CPU.", &regs);
+			panic(&regs, "Unknown interrupt passed to CPU.");
 			break;
 		case COPROCESSOR_FAULT:
 			prnt(COPROCESSOR_FAULT);
@@ -114,7 +114,7 @@ void isr_handler(registers_t regs)
 			prnt(ALIGNMENT_CHECK);
 			break;
 		case MACHINE_CHECK:
-			panic("Machine Check Exception caught by CPU.", &regs);
+			panic(&regs, "Machine Check Exception caught by CPU.");
 			break;
 		case 0x80:
 			printf("Received syscall interrupt\n");

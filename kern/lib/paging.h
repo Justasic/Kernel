@@ -40,29 +40,26 @@ typedef struct
 {
 	// Array of pointers to pagetables.
 	page_table_t *tables[1024];
-	/*
-	 Array of pointers to the pagetables above, but gives their *physical*
-	 location, for loading into the CR3 register.
-	 */
+	// Array of pointers to the pagetables above, but gives their *physical*
+	// location, for loading into the CR3 register.
 	uint32_t tablesPhysical[1024];
-	/*
-	  The physical address of tablesPhysical. This comes into play
-	  when we get our kernel heap allocated and the directory
-	  may be in a different location in virtual memory.
-	 */
+	// The physical address of tablesPhysical. This comes into play
+	// when we get our kernel heap allocated and the directory
+	// may be in a different location in virtual memory.
 	uint32_t physicalAddr;
 } page_directory_t;
 
 // Sets up the environment, page directories etc and enables paging.
-void initialize_paging(void);
+extern void initialize_paging(void);
 
 // Causes the specified page directory to be loaded into the CR3 register.
-void switch_page_directory(page_directory_t *new);
+extern void SwitchPagingDirectory(page_directory_t *new);
 
-/*
- Retrieves a pointer to the page required. If make == 1, if the page-table in which
- this page should reside isn't created, create it! 
- */
-page_t *get_page(uint32_t address, int make, page_directory_t *dir);
+// Retrieves a pointer to the page required. If make == 1, if the page-table in which
+// this page should reside isn't created, create it!
+extern page_t *GetPage(uint32_t address, int make, page_directory_t *dir);
+
+// Disables paging so we can do things which may cause page faults but are considered valid
+extern void DisablePaging(void);
 
 #endif // __KPAGING_H__

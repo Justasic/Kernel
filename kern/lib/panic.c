@@ -15,24 +15,37 @@
 
 #include "panic.h"
 #include "common.h"
+#include "paging.h"
 #include <stdio.h>
 #include <stdint.h>
 #include <stdarg.h>
 #include <tty/vga_terminal.h>
 
 // static registers_t regs;
-
-
 void PrintStackTrace(unsigned int MaxFrames)
 {
+	// Get our ebp value before disabling paging, this will screw up the
+	// stack trace if we don't
 	unsigned int *ebp = &MaxFrames - 2;
+	
+	// Disable interrupts and paging so we don't cause issues
+	// we're going to be halting soon anyway so none of this matters
+	EnterCriticalSection();
+	// NOTE: It's probably bad that we're disabling paging before
+	// we start printing a stack trace. There should be a better
+	// way to walk the stack and print messages than having to
+	// disable paging.
+	DisablePaging();
+	
 	printf("Stack Trace:\n");
 	
 	for (unsigned int frame = 0; frame < MaxFrames; ++frame)
 	{
-		unsigned int eip = ebp[1];
+		// Read http://fabiensanglard.net/macosxassembly/index.php
+		// to understand this more
+		unsigned int eip = ebp[1]; // get old EIP
 		if (eip == 0)
-			// no caller on stack
+			// No caller on stack, we've gone back as far as we can
 			break;
 		ebp = (unsigned int *)ebp[0];
 		unsigned int *args = &ebp[2];
@@ -45,34 +58,7 @@ void PrintStackTrace(unsigned int MaxFrames)
 ___ATTRIB_FORMAT__(2, 3)
 void panic(registers_t *regs, char *err, ...)
 {
-	// There's probably a way to use pusha, pushf, and some
-	// other opcodes to push all these to the stack and then
-	// use the registers_t struct
-#if 0
-	
-	// Save the registers to a struct.
-	__asm__ __volatile__(
-		"movl %%eax, %0\n\t"
-		"movl %%ebx, %1\n\t"
-		"movl %%ecx, %2\n\t"
-		"movl %%edx, %3\n\t"
-		"movl %%esp, %4\n\t"
-		"movl %%ebp, %5\n\t"
-		"movl %%esi, %6\n\t"
-		"movl %%edi, %7\n\t"
-		"movl %%eip, %8\n\t"
-		/* output operands   */
-		: "=r" (regs.eax), "=r" (regs.ebx), "=r" (regs.ecx), "=r" (regs.edx),
-		     "=r" (regs.esp), "=r" (regs.ebp), "=r" (regs.esi), "=r" (regs.edi),
-			"=r" (regs.eip)
-		: /* input operands    */
-		: /* clobber registers */
-	);
-#endif
-	// First, clear the screen.
-// 	vga_clear();
-	
-	// COnvert the arguments to a nice formatted message
+	// Convert the arguments to a nice formatted message
 	va_list ap;
 	char buf[(1 << 11)];
 	va_start(ap, err);
@@ -87,6 +73,10 @@ void panic(registers_t *regs, char *err, ...)
 	if (regs)
 	{
 		uint32_t cr0 = 0, cr3 = 0;
+		__asm__ __volatile__("movl %%cr0, %0\n\t"
+				     "movl %%cr3, %1\n\t"
+				     : "=r" (cr0), "=r" (cr3)
+		);
 		// Print the registers
 		printf("\nRegisters:\n");
 		printf(" eax: ................. 0x%-10X ebx: ................. 0x%X\n ecx: ................. 0x%-10X", regs->eax, regs->ebx, regs->ecx);
