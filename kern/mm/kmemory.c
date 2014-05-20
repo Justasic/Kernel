@@ -14,6 +14,8 @@
  */
 
 #include "mm/kmemory.h"
+#include "mm/kheap.h"
+#include "mm/paging.h"
 #include <stdint.h>
 #include <stddef.h> // for NULL
 #include <stdbool.h>
@@ -24,25 +26,42 @@ extern uint32_t bin_end;
 // Our placement address to start allocations
 uint32_t placement_addr = (uint32_t)&bin_end;
 
+// The kernel heap
+heap_t *kheap = 0;
+
 // Common function used for memory allocation.
 static void *kalloc_int(size_t sz, bool align, uint32_t *phys)
 {
-	if (align == true && (placement_addr & 0xFFFFF000))
+	void *ptr = NULL;
+	// If the heap is setup, use that for allocation.
+	if (kheap)
 	{
-		// Align the placement address
-		placement_addr &= 0xFFFFF000;
-		placement_addr += 0x1000;
+		ptr = halloc(sz, align, kheap);
+		if (phys)
+		{
+			page_t *page = GetPage((uint32_t)ptr, 0, kern_directory);
+			*phys = page->frame * 0x1000 + (uint32_t)ptr & 0xFFF;
+		}
 	}
-	
-	if (phys)
-		*phys = placement_addr;
-	
-	// allocate a new memory block
-	uint32_t tmp = placement_addr;
-	placement_addr += sz;
-	
-	// cast to a pointer
-	void *ptr = (void*)tmp;
+	else
+	{ // Otherwise, use the temporary placement allocator
+		if (align == true && (placement_addr & 0xFFFFF000))
+		{
+			// Align the placement address
+			placement_addr &= 0xFFFFF000;
+			placement_addr += 0x1000;
+		}
+		
+		if (phys)
+			*phys = placement_addr;
+		
+		// allocate a new memory block
+		uint32_t tmp = placement_addr;
+		placement_addr += sz;
+		
+		// cast to a pointer
+		ptr = (void*)tmp;
+	}
 	// Null the memory space pointed to that pointer
 	explicit_bzero(ptr, sz);
 	
@@ -72,6 +91,11 @@ void *kalloc_align_phys(size_t sz, uint32_t *phys)
 void *kalloc(size_t sz)
 {
 	return kalloc_int(sz, false, NULL);
+}
+
+void kfree(void *p)
+{
+	hfree(p, kheap);
 }
 
 // This neat function reduces the memory size and applies the appropriate

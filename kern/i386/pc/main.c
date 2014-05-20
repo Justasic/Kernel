@@ -106,6 +106,12 @@ void kern_start(uint32_t esp)
 	// Re-enable interrupts
 	ExitCriticalSection();
 	
+	char *str = kalloc(1024);
+	memcpy(str, (void*)"Hello test!", 12);
+	printf("%s\n", str);
+	kfree(str);
+// 	*str = 10;
+	
 	// Test our interrupt
 // 	__asm__ __volatile__("int $0x80" :: "a" (0x10));
 	

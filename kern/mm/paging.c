@@ -15,6 +15,7 @@
 #include "mm/paging.h"
 #include "mm/frame.h"
 #include "mm/kmemory.h"
+#include "mm/kheap.h"
 #include <string.h>
 #include <stdio.h>
 
@@ -31,8 +32,12 @@ page_directory_t *kern_directory = 0;
 // Current paging directory
 page_directory_t *cur_directory = 0;
 
+// Current kernel heap
+extern heap_t *kheap;
+
 void initialize_paging(void)
 {
+	printf("Initializing paging\n");
 	// The size of physical memory. For the moment we
 	// assume it is 16MB big.
 	uint32_t mem_end_page = 0x1000000;
@@ -44,6 +49,15 @@ void initialize_paging(void)
 	kern_directory = kalloc_align(sizeof(page_directory_t));
 	cur_directory = kern_directory;
 	
+	// Map some pages in the kernel heap area.
+	// Here we call GetPage but not AllocFrame. This causes page_table_t's 
+	// to be created where necessary. We can't allocate frames yet because they
+	// they need to be identity mapped first below, and yet we can't increase
+	// placement_addr between identity mapping and enabling the heap!
+	uint32_t i = 0;
+	for (i = KHEAP_START; i < KHEAP_START + KHEAP_INITIAL_SIZE; i += 0x1000)
+		GetPage(i, 1, kern_directory);
+	
 	// We need to identity map (phys addr = virt addr) from
 	// 0x0 to the end of used memory, so we can access this
 	// transparently, as if paging wasn't enabled.
@@ -51,7 +65,7 @@ void initialize_paging(void)
 	// inside the loop body we actually change placement_addr
 	// by calling kalloc(). A while loop causes this to be
 	// computed on-the-fly rather than once at the start.
-	uint32_t i = 0;
+	i = 0;
 	while (i < placement_addr)
 	{
 		// Kernel code is readable but not writeable from userspace.
@@ -59,10 +73,15 @@ void initialize_paging(void)
 		i += 0x1000;
 	}
 	
-	printf("Initializing paging\n");
+	// Now allocate those pages we mapped earlier.
+	for (i = KHEAP_START; i < KHEAP_START + KHEAP_INITIAL_SIZE; i += 0x1000)
+		AllocFrame(GetPage(i, 1, kern_directory), 0, 0);
 
 	// Now, enable paging!
 	SwitchPagingDirectory(kern_directory);
+	
+	// Initialise the kernel heap.
+	kheap = CreateHeap(KHEAP_START, KHEAP_START + KHEAP_INITIAL_SIZE, 0xCFFFF000, 0, 0);
 }
 
 void SwitchPagingDirectory(page_directory_t *dir)

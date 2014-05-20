@@ -49,6 +49,9 @@ typedef struct
 	uint32_t physicalAddr;
 } page_directory_t;
 
+extern page_directory_t *kern_directory;
+extern page_directory_t *cur_directory;
+
 // Sets up the environment, page directories etc and enables paging.
 extern void initialize_paging(void);
 

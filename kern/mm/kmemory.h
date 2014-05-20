@@ -23,6 +23,8 @@ extern void *kalloc_align(size_t sz);
 extern void *kalloc_phys(size_t sz, uint32_t *phys);
 extern void *kalloc_align_phys(size_t sz, uint32_t *phys);
 
+extern void kfree(void *p);
+
 // Calculation functions
 extern uint32_t MemoryReduce(uint32_t bytes);
 extern const char *MemoryReduceSuffix(uint32_t bytes);
