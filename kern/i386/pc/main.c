@@ -22,7 +22,7 @@
 #include "lib/common.h"
 #include "lib/kmemory.h"
 #include "lib/paging.h"
-#include "lib/linux.h"
+// #include "lib/linux.h"
 #include "tty/vga_terminal.h"
 #include "i386/pc/cpuid.h"
 #include "i386/pc/timer.h"
@@ -107,7 +107,7 @@ void kern_start(uint32_t esp)
 	ExitCriticalSection();
 	
 	// Test our interrupt
-	__asm__ __volatile__("int $0x80");
+	__asm__ __volatile__("int $0x80" :: "a" (0x10));
 	
 	// Initialize the Programmable Interrupt Timer at 100Hz
 	init_PIT(100);
@@ -121,19 +121,16 @@ void kern_start(uint32_t esp)
 	
 	printf("\nDone waiting!\n");
 	
-	// Debug exception
-// 	__asm__ __volatile__("int $0x06");
-	
-// 	uint32_t *ptr = (uint32_t*)0xA0000000;
-// 	uint32_t fault = *ptr;
-// 	(void)fault;
+	uint32_t *ptr = (uint32_t*)0xA0000000;
+	uint32_t fault = *ptr;
+	(void)fault;
 	
 	// Idle loop to make sure we don't leave
 	// the function and halt the CPU
 	while(true) ;
 }
 
-void __used kern_cleanup(void) 
+void kern_cleanup(void) 
 {
 	// Wipe out the memory and then exit.
 // 	uint32_t *mem_start = (uint32_t*)&bin_end;

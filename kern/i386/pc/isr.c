@@ -16,6 +16,7 @@
 #include <stdio.h>
 #include "lib/common.h"
 #include "lib/panic.h"
+#include "i386/pc/syscall.h"
 
 enum 
 {
@@ -119,7 +120,8 @@ void isr_handler(registers_t regs)
 			panic(&regs, "Machine Check Exception caught by CPU.");
 			break;
 		case 0x80:
-			printf("Received syscall interrupt\n");
+			printf("Received syscall interrupt with syscall 0x%X\n", regs.eax);
+			HandleSyscall(regs);
 			break;
 		default:
 			prnt(UNKNOWN_INTERRUPT);
