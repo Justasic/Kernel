@@ -49,7 +49,7 @@ int printf(const char *fmt, ...)
 	// FIXME: Since we don't quite have memory allocation yet,
 	// allocate a buffer on the stack which will handle *MOST*
 	// printf messages BUT NOT ALL!
-	char str[(1 << 7)]; // 65536 chars
+	char str[(1 << 10)]; // 65536 chars
 	
 	va_list ap;
 	va_start(ap, fmt);
@@ -83,7 +83,7 @@ int printcf(uint32_t color, const char *fmt, ...)
 	// FIXME: Since we don't quite have memory allocation yet,
 	// allocate a buffer on the stack which will handle *MOST*
 	// printf messages BUT NOT ALL!
-	char str[(1 << 7)]; // 65536 chars
+	char str[(1 << 10)]; // 65536 chars
 	
 	va_list ap;
 	va_start(ap, fmt);
@@ -118,7 +118,7 @@ int printrf(const char *fmt, ...)
 	// FIXME: Since we don't quite have memory allocation yet,
 	// allocate a buffer on the stack which will handle *MOST*
 	// printf messages BUT NOT ALL!
-	char str[(1 << 7)]; // 65536 chars
+	char str[(1 << 10)]; // 65536 chars
 	
 	va_list ap;
 	va_start(ap, fmt);

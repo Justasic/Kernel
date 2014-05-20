@@ -44,7 +44,7 @@ static void *kalloc_int(size_t sz, bool align, uint32_t *phys)
 	// cast to a pointer
 	void *ptr = (void*)tmp;
 	// Null the memory space pointed to that pointer
-// 	explicit_bzero(ptr, sz);
+	explicit_bzero(ptr, sz);
 	
 	// return our null-ed memory space
 	return ptr;
