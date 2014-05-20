@@ -12,8 +12,8 @@
  * IN AN ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF OR IN
  * CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
  */
-#include "lib/paging.h"
-#include "lib/frame.h"
+#include "mm/paging.h"
+#include "mm/frame.h"
 #include "lib/panic.h"
 
 // A bitset of frames - used or free.

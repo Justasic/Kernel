@@ -18,7 +18,7 @@
 __asm__(".code16gcc\n");
 #endif
 
-#include "lib/kmemory.h"
+#include "mm/kmemory.h"
  
 // load memory map to buffer - note: regparm(3) avoids stack issues with gcc in realmode
 uint32_t __attribute__((noinline)) __attribute__((regparm(3))) detectMemory(SMAP_entry_t* buffer, uint32_t maxentries)

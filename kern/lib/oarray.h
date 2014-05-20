@@ -12,20 +12,28 @@
  * IN AN ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF OR IN
  * CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
  */
-#ifndef __KFRAME_H__
-#define __KFRAME_H__
+#pragma once
 
 #include <stdint.h>
-#include <stddef.h>
-#include <stdbool.h>
-#include "lib/paging.h"
 
-// Macros used in the bitset algorithms.
-#define INDEX_FROM_BIT(a) (a / (8 * 4))
-#define OFFSET_FROM_BIT(a) (a % (8 * 4))
+// Generic type container
+typedef void* type_t;
 
-extern void AllocFrame(page_t *page, bool is_kernel, bool is_writeable);
-extern void FreeFrame(page_t *page);
+// A predicate should return nonzero if the first argument is less than the second.
+// otherwise it should return zero.
+typedef int8_t (*lessthan_predicate_t)(type_t,type_t);
+typedef struct
+{
+   type_t *array;
+   uint32_t size;
+   uint32_t max_size;
+   lessthan_predicate_t comp;
+} ordered_array_t;
 
+ordered_array_t CreateOrderedArray(uint32_t max_size, lessthan_predicate_t comp);
+ordered_array_t PlaceOrderedArray(void *addr, uint32_t max_size, lessthan_predicate_t comp);
 
-#endif // __KFRAME_H__
+void DestoryOrderedArray(ordered_array_t *array);
+void InsertOrderedArray(type_t item, ordered_array_t *array);
+type_t LookupOrderedArray(uint32_t i, ordered_array_t *array);
+void RemoveOrderedArray(uint32_t i, ordered_array_t *array);

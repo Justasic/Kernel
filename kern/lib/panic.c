@@ -14,8 +14,8 @@
  */
 
 #include "panic.h"
-#include "common.h"
-#include "paging.h"
+#include "lib/common.h"
+#include "mm/paging.h"
 #include <stdio.h>
 #include <stdint.h>
 #include <stdarg.h>

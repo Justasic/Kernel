@@ -13,7 +13,7 @@
  * CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
  */
 
-#include "lib/kmemory.h"
+#include "mm/kmemory.h"
 #include <stdint.h>
 #include <stddef.h> // for NULL
 #include <stdbool.h>

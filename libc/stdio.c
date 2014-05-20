@@ -19,7 +19,7 @@
 #include "string.h"
 #include "malloc.h"
 #include <tty/vga_terminal.h>
-#include <lib/kmemory.h>
+// #include <lib/kmemory.h>
 
 // TODO: this is temporary to clear away some of the warnings
 // #warning "Developer notice: This file is incomplete."

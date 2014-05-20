@@ -20,8 +20,8 @@
 
 #include "lib/panic.h"
 #include "lib/common.h"
-#include "lib/kmemory.h"
-#include "lib/paging.h"
+#include "mm/kmemory.h"
+#include "mm/paging.h"
 // #include "lib/linux.h"
 #include "tty/vga_terminal.h"
 #include "i386/pc/cpuid.h"
@@ -107,7 +107,7 @@ void kern_start(uint32_t esp)
 	ExitCriticalSection();
 	
 	// Test our interrupt
-	__asm__ __volatile__("int $0x80" :: "a" (0x10));
+// 	__asm__ __volatile__("int $0x80" :: "a" (0x10));
 	
 	// Initialize the Programmable Interrupt Timer at 100Hz
 	init_PIT(100);
