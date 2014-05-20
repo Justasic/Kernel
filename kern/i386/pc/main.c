@@ -22,6 +22,7 @@
 #include "lib/common.h"
 #include "lib/kmemory.h"
 #include "lib/paging.h"
+#include "lib/linux.h"
 #include "tty/vga_terminal.h"
 #include "i386/pc/cpuid.h"
 #include "i386/pc/timer.h"
@@ -42,7 +43,21 @@
 "                       \/__/                "
 #endif
 
+// This is one ugly-ass macro.
+#define BNYEH_LOGO \
+" ____                            __         \n" \
+"/\\  _`\\                         /\\ \\        \n" \
+"\\ \\ \\L\\ \\    ___   __  __     __\\ \\ \\___    \n" \
+" \\ \\  _ <' /' _ `\\/\\ \\/\\ \\  /'__`\\ \\  _ `\\  \n" \
+"  \\ \\ \\L\\ \\/\\ \\/\\ \\ \\ \\_\\ \\/\\  __/\\ \\ \\ \\ \\ \n" \
+"   \\ \\____/\\ \\_\\ \\_\\/`____ \\ \\____\\\\ \\_\\ \\_\\\n" \
+"    \\/___/  \\/_/\\/_/`/___/> \\/____/ \\/_/\\/_/\n" \
+"                       /\\___/               \n" \
+"                       \\/__/                \n\n"
+
+// defined by layout.ld
 extern uint32_t start_stack;
+extern uint32_t bin_end;
 
 extern void initialize_descriptor_tables(void);
 
@@ -55,26 +70,31 @@ void kern_start(uint32_t esp)
 {
 	start_stack = esp;
 	
+	// Do a quick check to make sure we're not running
+	// on linux. If we are, print some message to the console
+	// and exit. This calls the linux syscall for getpid.
+#if 0
+	if (LinuxCheck())
+	{
+		LinuxPuts(BNYEH_LOGO);
+		LinuxPuts("Bnyeh kernel version 1.0.0\n");
+		LinuxError("You dumbass, I am a kernel, not a program. Run me in a virtual machine.\n");
+	}
+#endif
+	
 	// Initialize the VGA console so we can
 	// have messages printed to the terminal.
 	vga_initialize();
 	
 	// Logo! :D
 	printf("Welcome to the Bnyeh Kernel!\n");
-	printrf(
-		" ____                            __         \n"
-		"/\\  _`\\                         /\\ \\        \n"
-		"\\ \\ \\L\\ \\    ___   __  __     __\\ \\ \\___    \n"
-		" \\ \\  _ <' /' _ `\\/\\ \\/\\ \\  /'__`\\ \\  _ `\\  \n"
-		"  \\ \\ \\L\\ \\/\\ \\/\\ \\ \\ \\_\\ \\/\\  __/\\ \\ \\ \\ \\ \n"
-		"   \\ \\____/\\ \\_\\ \\_\\/`____ \\ \\____\\\\ \\_\\ \\_\\\n"
-		"    \\/___/  \\/_/\\/_/`/___/> \\/____/ \\/_/\\/_/\n"
-		"                       /\\___/               \n"
-		"                       \\/__/                \n\n"
-	);
+	printrf(BNYEH_LOGO);
 	
 	printf("CPU: %s\n", GetCPUVendor());
 	printf("CPU has FPU: %b\n", CPUSupportsFeature(CPUID_FEAT_EDX_FPU));
+	
+	// Print our placement address
+	printf("Placement allocations start at 0x%X\n", (uint32_t)&bin_end);
 	
 	// Install our interrupt handler so we can handle
 	// CPU events properly.
@@ -89,7 +109,7 @@ void kern_start(uint32_t esp)
 	// Test our interrupt
 	__asm__ __volatile__("int $0x80");
 	
-	// Initialize the Programmable Interrupt Timer at 50Hz
+	// Initialize the Programmable Interrupt Timer at 100Hz
 	init_PIT(100);
 	
 	// poor-man's sleep
@@ -101,12 +121,25 @@ void kern_start(uint32_t esp)
 	
 	printf("\nDone waiting!\n");
 	
-	uint32_t *ptr = (uint32_t*)0xA0000000;
-	uint32_t fault = *ptr;
-	(void)fault;
+	// Debug exception
+// 	__asm__ __volatile__("int $0x06");
+	
+// 	uint32_t *ptr = (uint32_t*)0xA0000000;
+// 	uint32_t fault = *ptr;
+// 	(void)fault;
 	
 	// Idle loop to make sure we don't leave
 	// the function and halt the CPU
 	while(true) ;
 }
 
+void __used kern_cleanup(void) 
+{
+	// Wipe out the memory and then exit.
+// 	uint32_t *mem_start = (uint32_t*)&bin_end;
+	// NOTE: because we don't yet know the length of the ram
+	// we cannot clear it all. We must detect the total ram in
+	// the system.
+// 	explicit_bzero(mem_start, );
+	
+}

@@ -19,14 +19,15 @@
 #include "string.h"
 #include "malloc.h"
 #include <tty/vga_terminal.h>
+#include <lib/kmemory.h>
 
 // TODO: this is temporary to clear away some of the warnings
-#warning "Developer notice: This file is incomplete."
-#pragma clang diagnostic push
-#pragma clang diagnostic ignored "-Wunused-variable"
-#pragma clang diagnostic ignored "-Wunused-parameter"
-#pragma clang diagnostic ignored "-Wunused-function"
-#pragma clang diagnostic ignored "-Wreturn-type"
+// #warning "Developer notice: This file is incomplete."
+// #pragma clang diagnostic push
+// #pragma clang diagnostic ignored "-Wunused-variable"
+// #pragma clang diagnostic ignored "-Wunused-parameter"
+// #pragma clang diagnostic ignored "-Wunused-function"
+// #pragma clang diagnostic ignored "-Wreturn-type"
 
 // Prints colored and non-colored strings, these should be initialized when the kernel starts.
 // This is defined to allow for re-initialization by a better driver later in
@@ -48,7 +49,7 @@ int printf(const char *fmt, ...)
 	// FIXME: Since we don't quite have memory allocation yet,
 	// allocate a buffer on the stack which will handle *MOST*
 	// printf messages BUT NOT ALL!
-	char str[(1 << 10)]; // 65536 chars
+	char str[(1 << 7)]; // 65536 chars
 	
 	va_list ap;
 	va_start(ap, fmt);
@@ -62,7 +63,6 @@ int printf(const char *fmt, ...)
 	// to basically start catting our kernel .text segment to the terminal
 	// (which is nice and all but we just wanted to say hello world..)
 	if (print_color)
-// 		print_color(str, newlen, vga_color(COLOR_BLACK, COLOR_WHITE));
 		print_color(str, ret, vga_color(COLOR_BLACK, COLOR_LIGHT_GREY));
 	
 	return ret;
@@ -83,7 +83,7 @@ int printcf(uint32_t color, const char *fmt, ...)
 	// FIXME: Since we don't quite have memory allocation yet,
 	// allocate a buffer on the stack which will handle *MOST*
 	// printf messages BUT NOT ALL!
-	char str[(1 << 10)]; // 65536 chars
+	char str[(1 << 7)]; // 65536 chars
 	
 	va_list ap;
 	va_start(ap, fmt);
@@ -118,7 +118,7 @@ int printrf(const char *fmt, ...)
 	// FIXME: Since we don't quite have memory allocation yet,
 	// allocate a buffer on the stack which will handle *MOST*
 	// printf messages BUT NOT ALL!
-	char str[(1 << 10)]; // 65536 chars
+	char str[(1 << 7)]; // 65536 chars
 	
 	va_list ap;
 	va_start(ap, fmt);
@@ -157,7 +157,13 @@ int snprintf(char *str, size_t size, const char *format, ...)
 
 int vsprintf(char *str, const char *format, va_list ap)
 {
-	// This requires malloc support.
+	if (!format)
+		return -1;
+	
+// 	char *str = stdio_malloc(1 << 16); // 65536 chars
+	// WARNING: Guess the buffer. THIS IS BAD!!!
+	int ret = vsnprintf(str, 1 << 16, format, ap);
+	return ret;
 }
 
 ___ATTRIB_FORMAT__(2, 3)
@@ -167,8 +173,21 @@ int sprintf(char *str, const char *format, ...)
 	// we can determine the max size of the string without killing the
 	// entire kernel due to a memory fault.
 	
+	int ret = 0;
+	va_list ap;
+	va_start(ap, format);
+	
+	// WARNING: Guess the buffer. THIS IS BAD!!!
+	ret = snprintf(str, 1 << 16, format, ap);
+	
+	va_end(ap);
+	
+	return ret;
+	
 	// 
 	// return sprintf(str, <size>, format, ap);
+// 	str = stdio_malloc(1 << 16); // 65536 chars
+
 }
 
-#pragma clang diagnostic pop
+// #pragma clang diagnostic pop

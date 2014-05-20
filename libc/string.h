@@ -37,6 +37,11 @@ extern void *memcpy(void *dest, const void *src, size_t n);
 extern void *memset(void *s, int c, size_t n);
 extern void *memrev(void *dest, const void *src, size_t n);
 
+// Explicit mem* funcs (used for security)
+extern void bzero(void * const buf, const size_t n);
+extern void explicit_bzero(void * const buf, const size_t n);
+extern int timingsafe_bcmp(const void * const b1, const void * const b2, const size_t n);
+
 // extended libc funcs
 extern char *strtoupper(char *dest, const char *src);
 extern char *strtolower(char *dest, const char *src);

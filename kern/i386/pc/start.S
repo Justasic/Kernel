@@ -54,7 +54,7 @@ stack_top:
 # bootloader will jump to this position once the kernel has been loaded. It
 # doesn't make sense to return from this function as the bootloader is gone.
 .section .text
-.global _bootstrap
+.globl _bootstrap
 .type _bootstrap, @function
 _bootstrap:
 	# Welcome to kernel mode!
@@ -68,6 +68,12 @@ _bootstrap:
 
 	# Jump to C! :D
 	call kern_start
+	
+	# Clean up the stack for the next call
+	addl $8, %esp
+	
+	# Cleanup after the kernel is ready to leave.
+	call kern_cleanup
 
 	## If kern_start exits, we're gonna wanna hang the CPU.
 	# We can't poweroff the computer because that requires

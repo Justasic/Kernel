@@ -53,6 +53,7 @@ extern void vga_write_string(const char* str, vga_color_t color);
 extern void vga_initialize(void);
 extern void vga_putc(char c, vga_color_t color);
 extern void vga_redraw(void);
+extern void vga_background(vga_color_t color);
 
 // set in the upper bits of the character.
 // 0xFBCC - FB = foreground and Background; CC = ascii character

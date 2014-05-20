@@ -90,6 +90,7 @@ void isr_handler(registers_t regs)
 			break;
 		case PAGE_FAULT:
 		{
+			EnterCriticalSection();
 			// The faulting address is stored in the CR2 register.
 			uint32_t faulting_address;
 			__asm__ __volatile__("mov %%cr2, %0" : "=r" (faulting_address));
@@ -102,6 +103,7 @@ void isr_handler(registers_t regs)
 			int id = regs.err_code & 0x10;          // Caused by an instruction fetch?
 			panic(&regs, "Page fault (User-mode: %b, read-only:"
 			"%b, page present: %b, reserved: %b) at 0x%X", um, rw, present, reserved, faulting_address);
+			ExitCriticalSection();
 			break;
 		}
 		case UNKNOWN_INTERRUPT:

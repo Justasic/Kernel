@@ -35,12 +35,12 @@ uint8_t column;
 // Keep a buffer of all text on screen, allows redraws
 uint16_t buffer[VGA_HEIGHT * VGA_WIDTH];
 
+// A black-background, white-foreground space character.
+const uint16_t blank = ((vga_color(COLOR_BLACK, COLOR_WHITE) << 8) | ' ');
+
 // Scrolls the text on the screen up by one line.
 static void _vgaScroll(void)
 {
-	// A black-background, white-foreground space character.
-	uint16_t blank = ((vga_color(COLOR_BLACK, COLOR_WHITE) << 8) | ' ');
-	
 	// Row 25 is the end, this means we need to scroll up
 	if(row >= (VGA_HEIGHT+1))
 	{
@@ -156,7 +156,6 @@ void vga_initialize(void)
 {
 	// Check whether we're initialized.
 	static uint8_t initialized = 0;
-	uint16_t blank = ((vga_color(COLOR_BLACK, COLOR_WHITE) << 8) | ' ');
 	row = column = 0;
 	
 	for (size_t i = 0; i < (VGA_HEIGHT * VGA_WIDTH); ++i)
@@ -182,7 +181,6 @@ void vga_initialize(void)
 void vga_redraw(void)
 {
 	// Set all the characters to a blank space
-	uint16_t blank = ((vga_color(COLOR_BLACK, COLOR_WHITE) << 8) | ' ');
 	memset(vidmem, blank, VGA_HEIGHT * VGA_WIDTH);
 	
 	for (size_t i = 0; i < (VGA_HEIGHT * VGA_WIDTH); ++i)
@@ -195,4 +193,15 @@ void vga_redraw(void)
 // 	}
 	
 	_vgaMoveCursor();
+}
+
+// Change the background and foreground color of all the text.
+void vga_background(vga_color_t color)
+{
+	for (int i = 0; i < (VGA_HEIGHT * VGA_WIDTH); i++)
+	{
+		// Get the char again
+		uint8_t ch = vidmem[i] & 0xFF;
+		vidmem[i] = ch | (color << 8);
+	}
 }

@@ -91,7 +91,7 @@ page_t *GetPage(uint32_t address, int make, page_directory_t *dir)
 	uint32_t table_idx = address / 1024;
 	
 	if (dir->tables[table_idx]) // If this table is already assigned
-		return &dir->tables[table_idx]->pages[address%1024];
+		return &dir->tables[table_idx]->pages[address % 1024];
 	else if(make)
 	{
 		uint32_t tmp;

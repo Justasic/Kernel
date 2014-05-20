@@ -17,10 +17,35 @@
 #include <stdint.h>
 
 // Attribute definitions
-#define __noreturn __attribute__((noreturn))
-#define __naked    __attribute__((naked))
-#define __packed   __attribute__((packed))
-
+// see https://gcc.gnu.org/onlinedocs/gcc/Function-Attributes.html
+#define __noreturn         __attribute__((noreturn))
+#define __noinline         __attribute__((noinline))
+#define __naked            __attribute__((naked))
+#define __packed           __attribute__((packed))
+#define __nonull(args...)  __attribute__((nonnull(args...)))
+#define __neverretnull     __attribute__((returns_nonnull))
+#define __flatten          __attribute__((flatten))
+#define __inline_damnit    __attribute__((always_inline))
+#define __pure             __attribute__((pure))
+#define __hot              __attribute__((hot))
+#define __cold             __attribute__((cold))
+#define __section(x)       __attribute__((section(x)))
+#define __cdecl            __attribute__((cdecl))
+#define __stdcall          __attribute__((stdcall))
+#define __fastcall         __attribute__((fastcall))
+#define __thiscall         __attribute__((thiscall))
+#define __unused           __attribute__((unused))
+#define __used             __attribute__((used))
+#define __vishidden        __attribute__((visibility("hidden")))
+#define __visprotected     __attribute__((visibility("protected")))
+#define __visinternal      __attribute__((visibility("internal")))
+#define __visdefault       __attribute__((visibility("default")))
+#define __warn_unused_res  __attribute__((warn_unused_result))
+#define __section(x)       __attribute__((section(x)))
+#define __deprecated(x)    __attribute__((deprecated(x)))
+#define __warning(x)       __attribute__((warning(x)))
+#define __error(x)         __attribute__((error(x)))
+#define __malloc           __attribute__((malloc))
 
 // -- I/O Bus communication functions.
 extern void outb(uint16_t port, uint8_t value);

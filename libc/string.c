@@ -18,6 +18,7 @@
 #include "stddef.h"
 #include "ctype.h"
 #include "private/platform.h"
+#include "lib/common.h" // include kernel/lib/common.h for attribute defines
 
 // TODO: this is temporary to clear away some of the warnings
 #warning "Developer notice: This file is incomplete."
@@ -76,6 +77,10 @@ void *memrev(void *dest, const void *src, size_t n)
 	// Return provided buffer
 	return dest;
 }
+
+////////////////////////////////////////////////////////////////////////////////
+/////////////////////////// str* functions /////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////
 
 size_t strlen(const char *str)
 {
@@ -232,5 +237,48 @@ char *strerror(int errnum)
 {
 	return NULL; // TODO: this.
 }
+
+////////////////////////////////////////////////////////////////////////////////
+/////////////////////////// other functions ////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////
+
+// These functions are nasty compiler hacks to get both GCC and Clang to not
+// optimize away the bzero function
+__noinline void bzero(void * const buf, const size_t n)
+{
+	size_t i;
+	unsigned char * p = buf;
+	
+	for(i = 0; i < n; i++)
+		p[i] = 0;
+}
+
+static __noinline int __timingsafe_bcmp(const void * const b1, const void * const b2, const size_t n)
+{
+	size_t i;
+	const unsigned char * const p1 = b1;
+	const unsigned char * const p2 = b2;
+	int result = 0;
+	
+	for(i = 0; i < n; i++)
+		result |= p1[i] != p2[i];
+	
+	return result;
+}
+
+void (* volatile _explicit_bzero)(void * const buf, const size_t n) = bzero;
+int (* volatile _timingsafe_bcmp)(const void * const b1, const void * const b2, const size_t n) = __timingsafe_bcmp;
+
+void explicit_bzero(void * const buf, const size_t n)
+{
+	(*_explicit_bzero)(buf, n);
+}
+
+int timingsafe_bcmp(const void * const b1, const void * const b2, const size_t n)
+{
+	return (*_timingsafe_bcmp)(b1, b2, n);
+}
+
+
 
 #pragma clang diagnostic pop

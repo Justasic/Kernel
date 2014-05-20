@@ -21,6 +21,9 @@
 #include <stdarg.h>
 #include <tty/vga_terminal.h>
 
+// Color to differ the message from the other text.
+const vga_color_t color = vga_color(COLOR_BLACK, COLOR_WHITE);
+
 // static registers_t regs;
 void PrintStackTrace(unsigned int MaxFrames)
 {
@@ -28,16 +31,7 @@ void PrintStackTrace(unsigned int MaxFrames)
 	// stack trace if we don't
 	unsigned int *ebp = &MaxFrames - 2;
 	
-	// Disable interrupts and paging so we don't cause issues
-	// we're going to be halting soon anyway so none of this matters
-	EnterCriticalSection();
-	// NOTE: It's probably bad that we're disabling paging before
-	// we start printing a stack trace. There should be a better
-	// way to walk the stack and print messages than having to
-	// disable paging.
-	DisablePaging();
-	
-	printf("Stack Trace:\n");
+	printcf(color, "Stack Trace:\n");
 	
 	for (unsigned int frame = 0; frame < MaxFrames; ++frame)
 	{
@@ -49,7 +43,7 @@ void PrintStackTrace(unsigned int MaxFrames)
 			break;
 		ebp = (unsigned int *)ebp[0];
 		unsigned int *args = &ebp[2];
-		printf(" Frame[%d]: 0x%X\n", frame, eip);
+		printcf(color, " Frame[%d]: 0x%X\n", frame, eip);
 	}
 }
 
@@ -58,9 +52,31 @@ void PrintStackTrace(unsigned int MaxFrames)
 ___ATTRIB_FORMAT__(2, 3)
 void panic(registers_t *regs, char *err, ...)
 {
+	// Disable interrupts and paging so we don't cause issues
+	// we're going to be halting soon anyway so none of this matters
+	EnterCriticalSection();
+	
+	// If we have registers, go ahead and dump the CR0 and CR3 registers.
+	// This !!MUST!! be done before we disable paging or the addresses will
+	// be invalidated.
+	uint32_t cr0 = 0, cr3 = 0;
+	if (regs)
+	{
+		__asm__ __volatile__("movl %%cr0, %0\n\t"
+				     "movl %%cr3, %1\n\t"
+				     : "=r" (cr0), "=r" (cr3)
+		);
+	}
+	
+	// NOTE: It's probably bad that we're disabling paging before
+	// we start printing a stack trace. There should be a better
+	// way to walk the stack and print messages than having to
+	// disable paging.
+	DisablePaging();
+	
 	// Convert the arguments to a nice formatted message
 	va_list ap;
-	char buf[(1 << 11)];
+	char buf[(1 << 7)];
 	va_start(ap, err);
 	vsnprintf(buf, sizeof(buf), err, ap);
 	va_end(ap);
@@ -72,21 +88,17 @@ void panic(registers_t *regs, char *err, ...)
 	// If we have registers to print (which we likely will) then dump them
 	if (regs)
 	{
-		uint32_t cr0 = 0, cr3 = 0;
-		__asm__ __volatile__("movl %%cr0, %0\n\t"
-				     "movl %%cr3, %1\n\t"
-				     : "=r" (cr0), "=r" (cr3)
-		);
+
 		// Print the registers
-		printf("\nRegisters:\n");
-		printf(" eax: ................. 0x%-10X ebx: ................. 0x%X\n ecx: ................. 0x%-10X", regs->eax, regs->ebx, regs->ecx);
-		printf(" edx: ................. 0x%X\n esp: ................. 0x%-10X ebp: ................. 0x%X\n", regs->edx, regs->esp, regs->ebp);
-		printf(" eip: ................. 0x%-10X cr0: ................. 0x%X\n cr3: ................. 0x%X\n", regs->eip, cr0, cr3);
-		printf(" Interrupt Number: .... 0x%X\n", regs->int_no);
-		printf(" Interrupt Type: ...... 0x%X\n", regs->is_irq);
-		printf(" Error Code: .......... 0x%X\n", regs->err_code);
-		printf(" EFLAGS: .............. 0x%X\n", regs->eflags);
-		printf(" User ESP: ............ 0x%X\n\n", regs->useresp);
+		printcf(color, "\nRegisters:\n");
+		printcf(color, " eax: ................. 0x%-10X ebx: ................. 0x%X\n ecx: ................. 0x%-10X", regs->eax, regs->ebx, regs->ecx);
+		printcf(color, " edx: ................. 0x%X\n esp: ................. 0x%-10X ebp: ................. 0x%X\n", regs->edx, regs->esp, regs->ebp);
+		printcf(color, " eip: ................. 0x%-10X cr0: ................. 0x%X\n cr3: ................. 0x%X\n", regs->eip, cr0, cr3);
+		printcf(color, " Interrupt Number: .... 0x%X\n", regs->int_no);
+		printcf(color, " Interrupt Type: ...... 0x%X\n", regs->is_irq);
+		printcf(color, " Error Code: .......... 0x%X\n", regs->err_code);
+		printcf(color, " EFLAGS: .............. 0x%X\n", regs->eflags);
+		printcf(color, " User ESP: ............ 0x%X\n\n", regs->useresp);
 	}
 	
 	// Print a stack trace so we know wtf is going on in the stack

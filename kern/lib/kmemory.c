@@ -44,7 +44,7 @@ static void *kalloc_int(size_t sz, bool align, uint32_t *phys)
 	// cast to a pointer
 	void *ptr = (void*)tmp;
 	// Null the memory space pointed to that pointer
-	memset(ptr, 0, sz);
+// 	explicit_bzero(ptr, sz);
 	
 	// return our null-ed memory space
 	return ptr;
@@ -72,4 +72,42 @@ void *kalloc_align_phys(size_t sz, uint32_t *phys)
 void *kalloc(size_t sz)
 {
 	return kalloc_int(sz, false, NULL);
+}
+
+// This neat function reduces the memory size and applies the appropriate
+// suffix to it. This is useful for printing debug messages and such.
+uint32_t MemoryReduce(uint32_t bytes)
+{
+	uint32_t ret = bytes;
+	while (ret < 1024)
+		ret >>= 10;
+	return ret;
+}
+
+const char *MemoryReduceSuffix(uint32_t bytes)
+{
+	const char *suffixes[] = {
+		"B"
+		"KB",
+		"MB",
+		"GB",
+		"TB",
+		"PB",
+		"EB",
+		"ZB",
+		"YB",
+		"Too damn big"
+	};
+	
+	uint32_t ret = bytes, arr = 0;
+	while(ret < 1024)
+	{
+		ret >>= 10;
+		arr++;
+	}
+	
+	if (ret > (sizeof(suffixes) / sizeof(*suffixes)))
+		return "Too damn big";
+
+	return suffixes[arr];
 }
