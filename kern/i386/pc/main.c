@@ -24,6 +24,7 @@
 #include "mm/paging.h"
 // #include "lib/linux.h"
 #include "tty/vga_terminal.h"
+#include "input/keyboard.h"
 #include "i386/pc/cpuid.h"
 #include "i386/pc/timer.h"
 
@@ -90,6 +91,11 @@ void kern_start(uint32_t esp)
 	printf("Welcome to the Bnyeh Kernel!\n");
 	printrf(BNYEH_LOGO);
 	
+	// Initialize the keyboard before anything else, this can allow us
+	// to process input in case we come to a condition on whether we
+	// wanna continue or not.
+	InitializeKeyboard();
+	
 	// print some basic CPU information, this will be moved away later.
 	printf("CPU: %s\n", GetCPUVendor());
 	printf("CPU has FPU: %b\n", CPUSupportsFeature(CPUID_FEAT_EDX_FPU));
@@ -128,7 +134,7 @@ void kern_start(uint32_t esp)
 	
 	// If paging works correctly, this will call an
 	// syscall which kills the kernel via a panic
-	__asm__ __volatile__("int $0x80" :: "a" (0x10));
+// 	__asm__ __volatile__("int $0x80" :: "a" (0x10));
 	
 	// Idle loop to make sure we don't leave
 	// the function and halt the CPU

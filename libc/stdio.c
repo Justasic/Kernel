@@ -34,6 +34,7 @@
 // the kernel init stages.
 void (*print_color)(const char *, size_t len, vga_color_t color);
 void (*print_rainbow)(const char *str, size_t len);
+void (*putch)(const char c, vga_color_t color);
 
 // Print formatted
 ___ATTRIB_FORMAT__(1, 2)
@@ -200,6 +201,12 @@ int sprintf(char *str, const char *format, ...)
 	// return sprintf(str, <size>, format, ap);
 // 	str = stdio_malloc(1 << 16); // 65536 chars
 
+}
+
+int putc(int c)
+{
+	putch(c, vga_color(COLOR_BLACK, COLOR_LIGHT_GREY));
+	return c;
 }
 
 // #pragma clang diagnostic pop

@@ -29,4 +29,6 @@ ___ATTRIB_FORMAT__(3, 4) extern int snprintf(char *str, size_t size, const char 
 extern int vsprintf(char *str, const char *format, va_list ap);
 extern int vsnprintf(char *str, size_t size, const char *format, va_list ap);
 
+extern int putc(int c);
+
 #endif
