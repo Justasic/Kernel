@@ -30,7 +30,7 @@ uint32_t placement_addr = (uint32_t)&bin_end;
 heap_t *kheap = 0;
 
 // Common function used for memory allocation.
-static void *kalloc_int(size_t sz, bool align, uint32_t *phys)
+static void *kalloc_int(size_t sz, bool align, bool nowipe, uint32_t *phys)
 {
 	void *ptr = NULL;
 	// If the heap is setup, use that for allocation.
@@ -40,7 +40,7 @@ static void *kalloc_int(size_t sz, bool align, uint32_t *phys)
 		if (phys)
 		{
 			page_t *page = GetPage((uint32_t)ptr, 0, kern_directory);
-			*phys = page->frame * 0x1000 + (uint32_t)ptr & 0xFFF;
+			*phys = page->frame * PAGE_SIZE + (uint32_t)ptr & 0xFFF;
 		}
 	}
 	else
@@ -49,7 +49,7 @@ static void *kalloc_int(size_t sz, bool align, uint32_t *phys)
 		{
 			// Align the placement address
 			placement_addr &= 0xFFFFF000;
-			placement_addr += 0x1000;
+			placement_addr += PAGE_SIZE;
 		}
 		
 		if (phys)
@@ -63,7 +63,8 @@ static void *kalloc_int(size_t sz, bool align, uint32_t *phys)
 		ptr = (void*)tmp;
 	}
 	// Null the memory space pointed to that pointer
-	explicit_bzero(ptr, sz);
+	if (!nowipe)
+		explicit_bzero(ptr, sz);
 	
 	// return our null-ed memory space
 	return ptr;
@@ -72,25 +73,30 @@ static void *kalloc_int(size_t sz, bool align, uint32_t *phys)
 // Returns a page-aligned pointer
 void *kalloc_align(size_t sz)
 {
-	return kalloc_int(sz, true, NULL);
+	return kalloc_int(sz, true, false, NULL);
 }
 
 // Returns a physical address
 void *kalloc_phys(size_t sz, uint32_t *phys)
 {
-	return kalloc_int(sz, false, phys);
+	return kalloc_int(sz, false, false, phys);
 }
 
 // Returns a page-aligned pointer and physical address
 void *kalloc_align_phys(size_t sz, uint32_t *phys)
 {
-	return kalloc_int(sz, true, phys);
+	return kalloc_int(sz, true, false, phys);
 }
 
 // Just returns a pointer
 void *kalloc(size_t sz)
 {
-	return kalloc_int(sz, false, NULL);
+	return kalloc_int(sz, false, false, NULL);
+}
+
+void *kalloc_align_phys_nowipe(size_t sz, uint32_t *phys)
+{
+	return kalloc_int(sz, true, true, phys);
 }
 
 void kfree(void *p)

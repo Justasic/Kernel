@@ -21,7 +21,7 @@ uint32_t tick = 0;
 static void callback(registers_t regs)
 {
 	tick++;
-	printf("Tick: %d\r", tick);
+// 	printf("Tick: %d\r", tick);
 }
 
 void init_PIT(uint32_t freq)

@@ -28,8 +28,8 @@ option(USE_GCC_TOOLCHAIN "Use the GCC toolchain from tools/mkcrosscompiler_gcc.s
 # these are any additional flags which should be added to the base compiles. Things like 32 bit or elf binaries
 set(CFLAGS "${ISA_C_FLAGS} -m32 -std=c11 -Wall -Wextra -ffreestanding -fno-builtin")
 set(CFLAGS "${CFLAGS} -nostdlib -nostdinc -finline-functions -fno-stack-protector -fomit-frame-pointer")
-set(CFLAGS "${CFLAGS} -Werror=implicit-function-declaration")
-# linker flags and Assembler flags too
+set(CFLAGS "${CFLAGS} -Werror=implicit-function-declaration -mno-sse")
+# linker flags and Assembler flags too -Wl,--oformat,binary
 set(LINKFLAGS "${ISA_LINKER_FLAGS} ${PLATFORM_LINKER_FLAGS}")
 set(ASM_FLAGS "${ISA_ASM_FLAGS}")
 

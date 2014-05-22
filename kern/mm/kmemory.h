@@ -22,6 +22,7 @@ extern void *kalloc(size_t sz);
 extern void *kalloc_align(size_t sz);
 extern void *kalloc_phys(size_t sz, uint32_t *phys);
 extern void *kalloc_align_phys(size_t sz, uint32_t *phys);
+extern void *kalloc_align_phys_nowipe(size_t sz, uint32_t *phys);
 
 extern void kfree(void *p);
 

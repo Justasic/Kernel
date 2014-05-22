@@ -1,21 +1,7 @@
-Needed for functional use
-- malloc()
-- calloc()
-- realloc()
-- free()
-- assert()
-
-Needed for debugging
-- printf()
-- vsnprintf()
-- sprintf()
-
 Required Implementations (in no order)
 - VGA Framebuffer driver (or just something other than 80x25 terminals)
-- Interrupt handler
 - Syscalls
 - Protected-Mode switching
-- Memory Paging
 - Threading
 - User-Mode switching
 - Long-Mode switching
@@ -25,4 +11,3 @@ Required Implementations (in no order)
 - Keyboard input
 - Mouse input
 - CPU Identification and CPU specific configurations
-- Paging

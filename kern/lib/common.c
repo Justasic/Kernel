@@ -32,3 +32,12 @@ uint16_t inw(uint16_t port)
 	__asm__ __volatile__("inw %1, %0" : "=a" (ret) : "dN" (port));
 	return ret;
 }
+
+
+void sleep(uint32_t secs)
+{
+	extern uint32_t tick;
+	uint32_t nexttick = tick + (secs * 100);
+	while (tick < nexttick)
+		;
+}

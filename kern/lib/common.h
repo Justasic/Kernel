@@ -52,6 +52,9 @@ extern void outb(uint16_t port, uint8_t value);
 extern uint8_t inb(uint16_t port);
 extern uint16_t inw(uint16_t port);
 
+// -- Sleep functions
+extern void sleep(uint32_t secs);
+
 // -- Critical Section definitions
 // First disables all maskable interrupts
 // the second re-enables them

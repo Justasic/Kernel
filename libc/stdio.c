@@ -56,6 +56,8 @@ int printf(const char *fmt, ...)
 	
 	//vsnprintf(str, newlen, fmt, ap);
 	int ret = vsnprintf(str, sizeof(str), fmt, ap);
+	// Null-terminate
+	str[ret] = 0;
 	
 	va_end(ap);
 	
@@ -90,6 +92,8 @@ int printcf(uint32_t color, const char *fmt, ...)
 	
 	//vsnprintf(str, newlen, fmt, ap);
 	int ret = vsnprintf(str, sizeof(str), fmt, ap);
+	// Null-terminate
+	str[ret] = 0;
 	
 	va_end(ap);
 	
@@ -125,6 +129,8 @@ int printrf(const char *fmt, ...)
 	
 	//vsnprintf(str, newlen, fmt, ap);
 	int ret = vsnprintf(str, sizeof(str), fmt, ap);
+	// Null-terminate
+	str[ret] = 0;
 	
 	va_end(ap);
 	
@@ -149,6 +155,8 @@ int snprintf(char *str, size_t size, const char *format, ...)
 	va_start(ap, format);
 	
 	int ret = vsnprintf(str, size, format, ap);
+	// Null-terminate
+	str[ret] = 0;
 	
 	va_end(ap);
 	
@@ -163,6 +171,8 @@ int vsprintf(char *str, const char *format, va_list ap)
 // 	char *str = stdio_malloc(1 << 16); // 65536 chars
 	// WARNING: Guess the buffer. THIS IS BAD!!!
 	int ret = vsnprintf(str, 1 << 16, format, ap);
+	// Null-terminate
+	str[ret] = 0;
 	return ret;
 }
 
@@ -179,6 +189,8 @@ int sprintf(char *str, const char *format, ...)
 	
 	// WARNING: Guess the buffer. THIS IS BAD!!!
 	ret = snprintf(str, 1 << 16, format, ap);
+	// Null-terminate
+	str[ret] = 0;
 	
 	va_end(ap);
 	

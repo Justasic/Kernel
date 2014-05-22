@@ -102,8 +102,11 @@ void isr_handler(registers_t regs)
 			int um = regs.err_code & 0x4;           // Processor was in user-mode?
 			int reserved = regs.err_code & 0x8;     // Overwritten CPU-reserved bits of page entry?
 			int id = regs.err_code & 0x10;          // Caused by an instruction fetch?
-			panic(&regs, "Page fault (User-mode: %b, read-only:"
-			"%b, page present: %b, reserved: %b) at 0x%X", um, rw, present, reserved, faulting_address);
+			panic(&regs, "Page fault (%s %s %s %s) at 0x%X",
+			      um ? "Usermode," : "",
+			      rw ? "Read-Only," : "",
+			      present ? "Page not present," : "",
+			      reserved ? "Reserved" : "", faulting_address);
 			ExitCriticalSection();
 			break;
 		}

@@ -38,11 +38,9 @@ ordered_array_t PlaceOrderedArray(void *addr, uint32_t max_size, lessthan_predic
 	ret.array = (type_t*)addr;
 	
 	explicit_bzero(ret.array, max_size * sizeof(type_t));
-	
 	ret.size = 0;
 	ret.max_size = max_size;
 	ret.comp = comp;
-	
 	return ret;
 }
 
@@ -81,7 +79,7 @@ void InsertOrderedArray(type_t item, ordered_array_t *array)
 
 type_t LookupOrderedArray(uint32_t i, ordered_array_t *array)
 {
-	if (i < array->size)
+	if (i > array->size)
 		panic(NULL, "i < array->size: %d < %d\n", i, array->size);
 	
 	return array->array[i];

@@ -79,10 +79,7 @@ void AllocFrame(page_t *page, bool is_kernel, bool is_writeable)
 	{
 		uint32_t idx = FirstFrame(); // idx is now the index of the first free frame.
 		if (idx == (uint32_t)-1)
-		{
-			// PANIC is just a macro that prints a message to the screen then hits an infinite loop.
 			panic(NULL, "No free frames to allocate!");
-		}
 		
 		SetFrame(idx * 0x1000); // this frame is now ours!
 		page->present = 1; // Mark it as present.
@@ -96,11 +93,9 @@ void AllocFrame(page_t *page, bool is_kernel, bool is_writeable)
 void FreeFrame(page_t *page)
 {
 	uint32_t frame;
-	if (!(frame=page->frame))
+	if (!(frame = page->frame))
 		return; // The given page didn't actually have an allocated frame!
-	else
-	{
-		ClearFrame(frame); // Frame is now free again.
-		page->frame = 0x0; // Page now doesn't have a frame.
-	}
+		
+	ClearFrame(frame); // Frame is now free again.
+	page->frame = 0x0; // Page now doesn't have a frame.
 } 

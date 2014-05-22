@@ -20,6 +20,8 @@
 #include "lib/common.h"
 #include "i386/pc/isr.h"
 
+#define PAGE_SIZE 0x1000
+
 typedef struct
 {
 	uint32_t present    : 1;   // Page present in memory

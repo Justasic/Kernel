@@ -90,6 +90,7 @@ void kern_start(uint32_t esp)
 	printf("Welcome to the Bnyeh Kernel!\n");
 	printrf(BNYEH_LOGO);
 	
+	// print some basic CPU information, this will be moved away later.
 	printf("CPU: %s\n", GetCPUVendor());
 	printf("CPU has FPU: %b\n", CPUSupportsFeature(CPUID_FEAT_EDX_FPU));
 	
@@ -106,30 +107,28 @@ void kern_start(uint32_t esp)
 	// Re-enable interrupts
 	ExitCriticalSection();
 	
-	char *str = kalloc(1024);
-	memcpy(str, (void*)"Hello test!", 12);
-	printf("%s\n", str);
-	kfree(str);
-// 	*str = 10;
-	
 	// Test our interrupt
 // 	__asm__ __volatile__("int $0x80" :: "a" (0x10));
 	
 	// Initialize the Programmable Interrupt Timer at 100Hz
 	init_PIT(100);
 	
-	// poor-man's sleep
-	extern uint32_t tick;
-	// wait 4 seconds
-	uint32_t nexttick = tick+400;
-	while (tick <= nexttick)
-		;
+	// Sleep for a bit
+	sleep(4);
 	
-	printf("\nDone waiting!\n");
+	printf("Done waiting!\n");
 	
-	uint32_t *ptr = (uint32_t*)0xA0000000;
-	uint32_t fault = *ptr;
-	(void)fault;
+	char *str = kalloc(300);
+	strcpy(str, "Test kalloc!");
+	printf("%s\n", str);
+	printf("Freeing string!\n");
+	kfree(str);
+	printf("use-after-free\n");
+	*str = 99;
+	
+	// If paging works correctly, this will call an
+	// syscall which kills the kernel via a panic
+	__asm__ __volatile__("int $0x80" :: "a" (0x10));
 	
 	// Idle loop to make sure we don't leave
 	// the function and halt the CPU

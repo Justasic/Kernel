@@ -23,7 +23,7 @@
 #define KHEAP_INITIAL_SIZE  0x100000
 
 #define HEAP_INDEX_SIZE   0x20000
-#define HEAP_MAGIC        0x123890AB
+#define HEAP_MAGIC        0x8BADF00D
 #define HEAP_MIN_SIZE     0x70000
 
 typedef struct
