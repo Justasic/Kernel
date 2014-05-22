@@ -55,7 +55,7 @@ extern page_directory_t *kern_directory;
 extern page_directory_t *cur_directory;
 
 // Sets up the environment, page directories etc and enables paging.
-extern void initialize_paging(void);
+extern void InitializePaging(void);
 
 // Causes the specified page directory to be loaded into the CR3 register.
 extern void SwitchPagingDirectory(page_directory_t *new);

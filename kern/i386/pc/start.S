@@ -67,13 +67,13 @@ _bootstrap:
 	push %esp
 
 	# Jump to C! :D
-	call kern_start
+	call KernelStart
 	
 	# Clean up the stack for the next call
 	addl $8, %esp
 	
 	# Cleanup after the kernel is ready to leave.
-	call kern_cleanup
+	call KernelCleanup
 
 	## If kern_start exits, we're gonna wanna hang the CPU.
 	# We can't poweroff the computer because that requires

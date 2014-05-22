@@ -19,13 +19,13 @@
 
 isr_t interrupt_handlers[256];
 
-void register_interrupt_handler(uint8_t n, isr_t handler)
+void RegisterIRQHandler(uint8_t n, isr_t handler)
 {
 	printf("Installing interrupt handler %d\n", n);
 	interrupt_handlers[n] = handler;
 }
 
-void irq_handler(registers_t regs)
+void IRQHandler(registers_t regs)
 {
 	// Send an EOI (end of interrupt) signal to the PICs.
 	// If this interrupt involved the slave.

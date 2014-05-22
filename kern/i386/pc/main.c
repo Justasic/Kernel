@@ -23,7 +23,7 @@
 #include "mm/kmemory.h"
 #include "mm/paging.h"
 // #include "lib/linux.h"
-#include "tty/vga_terminal.h"
+#include "tty/terminal.h"
 #include "input/keyboard.h"
 #include "i386/pc/cpuid.h"
 #include "i386/pc/timer.h"
@@ -60,14 +60,14 @@
 extern uint32_t start_stack;
 extern uint32_t bin_end;
 
-extern void initialize_descriptor_tables(void);
+extern void InitializeDescriptorTables(void);
 
 // Welcome to C. We have alcohol in the libc
 // and there's chips in the IRQs. Be sure to
 // go check out the VGA before you go home
 // tonight. Oh and don't forget, have a good time.
 // ;)
-void kern_start(uint32_t esp)
+void KernelStart(uint32_t esp)
 {
 	start_stack = esp;
 	
@@ -85,7 +85,7 @@ void kern_start(uint32_t esp)
 	
 	// Initialize the VGA console so we can
 	// have messages printed to the terminal.
-	vga_initialize();
+	VGAInitialize();
 	
 	// Logo! :D
 	printf("Welcome to the Bnyeh Kernel!\n");
@@ -105,10 +105,10 @@ void kern_start(uint32_t esp)
 	
 	// Install our interrupt handler so we can handle
 	// CPU events properly.
-	initialize_descriptor_tables();
+	InitializeDescriptorTables();
 	
 	// Initialize the paging system
-	initialize_paging();
+	InitializePaging();
 	
 	// Re-enable interrupts
 	ExitCriticalSection();
@@ -117,7 +117,7 @@ void kern_start(uint32_t esp)
 // 	__asm__ __volatile__("int $0x80" :: "a" (0x10));
 	
 	// Initialize the Programmable Interrupt Timer at 100Hz
-	init_PIT(100);
+	InitializePIT(100);
 	
 	// Sleep for a bit
 	sleep(4);
@@ -145,7 +145,7 @@ void kern_start(uint32_t esp)
 		__asm__ __volatile__("hlt");
 }
 
-void kern_cleanup(void) 
+void KernelCleanup(void) 
 {
 	// Wipe out the memory and then exit.
 // 	uint32_t *mem_start = (uint32_t*)&bin_end;

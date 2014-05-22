@@ -73,7 +73,7 @@ isr_stub:
 	movw %ax, %gs
 	
 	# Jump to C and handle the interrupt
-	call common_handler
+	call CommonHandler
 	
 	# Restore original data segment descriptor
 	pop %eax

@@ -41,8 +41,8 @@ typedef struct idt_ptr_struct idt_ptr_t;
 idt_entry_t idt_entries[256];
 idt_ptr_t   idt_ptr;
 
-// idt_flush function -- defined in gdt.S
-extern void idt_flush(uint32_t);
+// FlushIDT function -- defined in gdt.S
+extern void FlushIDT(uint32_t);
 
 // All of the interrupts.
 extern void isr0 ();
@@ -99,7 +99,7 @@ extern void irq13 ();
 extern void irq14 ();
 extern void irq15 ();
 
-static void idt_set_gate(uint8_t num, uint32_t base, uint16_t sel, uint8_t flags)
+static void IDTSetGate(uint8_t num, uint32_t base, uint16_t sel, uint8_t flags)
 {
 	idt_entries[num].base_lo = base & 0xFFFF;
 	idt_entries[num].base_hi = (base >> 16) & 0xFFFF;
@@ -111,10 +111,9 @@ static void idt_set_gate(uint8_t num, uint32_t base, uint16_t sel, uint8_t flags
 	idt_entries[num].flags   = flags /* | 0x60 */;
 } 
 
-#define set_gate(x) idt_set_gate(x, (uint32_t)isr##x , 0x08, 0x8E);
-#define set_irq(x) idt_set_gate(x, (uint32_t)irq##x, 0x08, 0x8E);
+#define SetGate(x) IDTSetGate(x, (uint32_t)isr##x , 0x08, 0x8E);
 
-void init_idt(void)
+void InitializeIDT(void)
 {
 	idt_ptr.limit = sizeof(idt_entry_t) * 256 -1;
 	idt_ptr.base  = (uint32_t)&idt_entries;
@@ -134,62 +133,62 @@ void init_idt(void)
 	outb(0xA1, 0x0);
 	
 	// We could make this a loop but unrolled loops are awesome :3
-	set_gate(0);
-	set_gate(1);
-	set_gate(2);
-	set_gate(3);
-	set_gate(4);
-	set_gate(5);
-	set_gate(6);
-	set_gate(7);
-	set_gate(8);
-	set_gate(9);
-	set_gate(10);
-	set_gate(11);
-	set_gate(12);
-	set_gate(13);
-	set_gate(14);
-	set_gate(15);
-	set_gate(16);
-	set_gate(17);
-	set_gate(18);
-	set_gate(19);
-	set_gate(20);
-	set_gate(21);
-	set_gate(22);
-	set_gate(23);
-	set_gate(24);
-	set_gate(25);
-	set_gate(26);
-	set_gate(27);
-	set_gate(28);
-	set_gate(29);
-	set_gate(30);
-	set_gate(31);
+	SetGate(0);
+	SetGate(1);
+	SetGate(2);
+	SetGate(3);
+	SetGate(4);
+	SetGate(5);
+	SetGate(6);
+	SetGate(7);
+	SetGate(8);
+	SetGate(9);
+	SetGate(10);
+	SetGate(11);
+	SetGate(12);
+	SetGate(13);
+	SetGate(14);
+	SetGate(15);
+	SetGate(16);
+	SetGate(17);
+	SetGate(18);
+	SetGate(19);
+	SetGate(20);
+	SetGate(21);
+	SetGate(22);
+	SetGate(23);
+	SetGate(24);
+	SetGate(25);
+	SetGate(26);
+	SetGate(27);
+	SetGate(28);
+	SetGate(29);
+	SetGate(30);
+	SetGate(31);
 	
-	set_gate(128); // 0x80
+	SetGate(128); // 0x80
 	
 	// Unrolled IRQ loop to initialize the IRQs
-	idt_set_gate(32, (uint32_t)irq0, 0x08, 0x8E);
-	idt_set_gate(33, (uint32_t)irq1, 0x08, 0x8E);
-	idt_set_gate(34, (uint32_t)irq2, 0x08, 0x8E);
-	idt_set_gate(35, (uint32_t)irq3, 0x08, 0x8E);
-	idt_set_gate(36, (uint32_t)irq4, 0x08, 0x8E);
-	idt_set_gate(37, (uint32_t)irq5, 0x08, 0x8E);
-	idt_set_gate(38, (uint32_t)irq6, 0x08, 0x8E);
-	idt_set_gate(39, (uint32_t)irq7, 0x08, 0x8E);
-	idt_set_gate(40, (uint32_t)irq8, 0x08, 0x8E);
-	idt_set_gate(41, (uint32_t)irq9, 0x08, 0x8E);
-	idt_set_gate(42, (uint32_t)irq10, 0x08, 0x8E);
-	idt_set_gate(43, (uint32_t)irq11, 0x08, 0x8E);
-	idt_set_gate(44, (uint32_t)irq12, 0x08, 0x8E);
-	idt_set_gate(45, (uint32_t)irq13, 0x08, 0x8E);
-	idt_set_gate(46, (uint32_t)irq14, 0x08, 0x8E);
-	idt_set_gate(47, (uint32_t)irq15, 0x08, 0x8E);
+	IDTSetGate(32, (uint32_t)irq0, 0x08, 0x8E);
+	IDTSetGate(33, (uint32_t)irq1, 0x08, 0x8E);
+	IDTSetGate(34, (uint32_t)irq2, 0x08, 0x8E);
+	IDTSetGate(35, (uint32_t)irq3, 0x08, 0x8E);
+	IDTSetGate(36, (uint32_t)irq4, 0x08, 0x8E);
+	IDTSetGate(37, (uint32_t)irq5, 0x08, 0x8E);
+	IDTSetGate(38, (uint32_t)irq6, 0x08, 0x8E);
+	IDTSetGate(39, (uint32_t)irq7, 0x08, 0x8E);
+	IDTSetGate(40, (uint32_t)irq8, 0x08, 0x8E);
+	IDTSetGate(41, (uint32_t)irq9, 0x08, 0x8E);
+	IDTSetGate(42, (uint32_t)irq10, 0x08, 0x8E);
+	IDTSetGate(43, (uint32_t)irq11, 0x08, 0x8E);
+	IDTSetGate(44, (uint32_t)irq12, 0x08, 0x8E);
+	IDTSetGate(45, (uint32_t)irq13, 0x08, 0x8E);
+	IDTSetGate(46, (uint32_t)irq14, 0x08, 0x8E);
+	IDTSetGate(47, (uint32_t)irq15, 0x08, 0x8E);
 	
 	printf("Flushing interrupts\n");
 	
-	idt_flush((uint32_t)&idt_ptr);
+	FlushIDT((uint32_t)&idt_ptr);
 	
 	printf("Flush complete\n");
 }

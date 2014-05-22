@@ -19,10 +19,10 @@
 #include <stdio.h>
 #include <stdint.h>
 #include <stdarg.h>
-#include <tty/vga_terminal.h>
+#include <tty/terminal.h>
 
 // Color to differ the message from the other text.
-const vga_color_t color = vga_color(COLOR_BLACK, COLOR_WHITE);
+const vga_color_t color = VGAColor(COLOR_BLACK, COLOR_WHITE);
 
 // static registers_t regs;
 void PrintStackTrace(unsigned int MaxFrames)
@@ -83,7 +83,7 @@ void panic(registers_t *regs, char *err, ...)
 	
 	// Now that we're safe from register clobbering from function calls, we can
 	// call the print functions to dump those registers to the terminal.
-	printcf(vga_color(COLOR_BLACK, COLOR_LIGHT_RED), "PANIC! %s\n", buf);
+	printcf(VGAColor(COLOR_BLACK, COLOR_LIGHT_RED), "PANIC! %s\n", buf);
 	
 	// If we have registers to print (which we likely will) then dump them
 	if (regs)

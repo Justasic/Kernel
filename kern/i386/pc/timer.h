@@ -14,4 +14,4 @@
  */
 
 #include <stdint.h>
-extern void init_PIT(uint32_t freq);
+extern void InitializePIT(uint32_t freq);

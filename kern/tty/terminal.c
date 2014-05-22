@@ -14,7 +14,7 @@
  * CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
  */
 #include <string.h>
-#include "vga_terminal.h"
+#include "terminal.h"
 #include <lib/common.h>
 
 // Video memory pointer - always constant
@@ -37,7 +37,7 @@ uint8_t column;
 uint16_t buffer[VGA_HEIGHT * VGA_WIDTH];
 
 // A black-background, white-foreground space character.
-const uint16_t blank = ((vga_color(COLOR_BLACK, COLOR_WHITE) << 8) | ' ');
+const uint16_t blank = ((VGAColor(COLOR_BLACK, COLOR_WHITE) << 8) | ' ');
 
 // Scrolls the text on the screen up by one line.
 static void _vgaScroll(void)
@@ -76,7 +76,7 @@ static void _vgaMoveCursor(void)
 }
 
 // Put a character on the screen, scroll if needed
-void vga_putc(char c, vga_color_t color)
+void VGAPutc(char c, vga_color_t color)
 {
 	uint16_t *location;
 	
@@ -122,17 +122,17 @@ void vga_putc(char c, vga_color_t color)
 }
 
 // Write a null-terminated string
-void vga_write_string(const char* str, vga_color_t color) { vga_write_nstring(str, strlen(str), color); }
+void VGAWriteString(const char* str, vga_color_t color) { VGAWriteNString(str, strlen(str), color); }
 
 // Write a string with a specific length
-void vga_write_nstring(const char *str, size_t len, vga_color_t color)
+void VGAWriteNString(const char *str, size_t len, vga_color_t color)
 {
 	for (size_t i = 0; i < len; ++i)
-		vga_putc(str[i], color);
+		VGAPutc(str[i], color);
 }
 
 // Neat function to write rainbow strings
-void vga_write_rnstring(const char *str, size_t len)
+void VGAWriteRNString(const char *str, size_t len)
 {
 	for (size_t i = 0; i < len; ++i)
 	{
@@ -144,16 +144,16 @@ void vga_write_rnstring(const char *str, size_t len)
 			
 		// if it's an ascii charactor
 		if (str[i] >= ' ')
-			vga_putc(str[i], vga_color(COLOR_BLACK, (vga_color_t)co));
+			VGAPutc(str[i], VGAColor(COLOR_BLACK, (vga_color_t)co));
 		else
-			vga_putc(str[i], vga_color(COLOR_BLACK, vga_color(COLOR_BLACK, COLOR_WHITE)));
+			VGAPutc(str[i], VGAColor(COLOR_BLACK, VGAColor(COLOR_BLACK, COLOR_WHITE)));
 	}
 }
 
-void vga_write_rstring(const char *str) { vga_write_rnstring(str, strlen(str)); }
+void VGAWriteRString(const char *str) { VGAWriteRNString(str, strlen(str)); }
 
 // Initialize the VGA console
-void vga_initialize(void)
+void VGAInitialize(void)
 {
 	// Check whether we're initialized.
 	static uint8_t initialized = 0;
@@ -171,16 +171,16 @@ void vga_initialize(void)
 	// already been initialized.
 	if (initialized == 0)
 	{
-		vga_write_string("Initialized VGA console.\n", vga_color(COLOR_BLACK, COLOR_WHITE));
-		print_color = vga_write_nstring;
-		print_rainbow = vga_write_rnstring;
-		putch = vga_putc;
+		VGAWriteString("Initialized VGA console.\n", VGAColor(COLOR_BLACK, COLOR_WHITE));
+		print_color = VGAWriteNString;
+		print_rainbow = VGAWriteRNString;
+		putch = VGAPutc;
 		initialized = 1;
 	}
 }
 
 // Redraw the console.
-void vga_redraw(void)
+void VGARedraw(void)
 {
 	// Set all the characters to a blank space
 	memset(vidmem, blank, VGA_HEIGHT * VGA_WIDTH);
@@ -198,7 +198,7 @@ void vga_redraw(void)
 }
 
 // Change the background and foreground color of all the text.
-void vga_background(vga_color_t color)
+void VGABackground(vga_color_t color)
 {
 	for (int i = 0; i < (VGA_HEIGHT * VGA_WIDTH); i++)
 	{

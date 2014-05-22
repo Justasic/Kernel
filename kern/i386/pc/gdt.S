@@ -13,8 +13,8 @@
  * CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
  */
 
-.globl gdt_flush # export as symbol for C
-gdt_flush:
+.globl FlushGDT # export as symbol for C
+FlushGDT:
 	movl 4(%esp), %eax # get the pointer to GDT
 	lgdt (%eax)        # load the new GDT pointer
 	
@@ -28,8 +28,8 @@ gdt_flush:
 flush:
 	ret
 
-.globl idt_flush # export as symbol for C
-idt_flush:
+.globl FlushIDT # export as symbol for C
+FlushIDT:
 	movl 4(%esp), %eax # Get the pointer to the IDT from stack, passed as a parameter. 
 	lidt (%eax)        # Load the IDT pointer.
 	ret

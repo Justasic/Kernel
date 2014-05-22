@@ -51,13 +51,13 @@ typedef struct gdt_entry_s gdt_entry_t;
 
 // Extern for our gdt_flush function
 // this is defined in gdt.S
-extern void gdt_flush(uint32_t);
+extern void FlushGDT(uint32_t);
 
 // Global variables to the Global Descriptor Table
 gdt_entry_t gdt_entries[5];
 gdt_ptr_t   gdt_ptr;
 
-void init_gdt(void)
+void InitializeGDT(void)
 {
 	gdt_ptr.limit = (sizeof(gdt_entry_t) * 5) - 1;
 	gdt_ptr.base  = (uint32_t)&gdt_entries;
@@ -133,5 +133,5 @@ void init_gdt(void)
 	gdt_entries[4].gran = 1;
 	gdt_entries[4].base_high = 0;
 	
-	gdt_flush((uint32_t)&gdt_ptr);
+	FlushGDT((uint32_t)&gdt_ptr);
 }

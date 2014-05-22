@@ -13,7 +13,6 @@
  * CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
  */
 #include "linux.h"
-#include <tty/vga_terminal.h>
 #include <string.h>
 #include "common.h"
 

@@ -43,7 +43,7 @@ enum
 
 #define prnt(x) printf(#x " happened\n");
 
-void isr_handler(registers_t regs)
+void ISRHandler(registers_t regs)
 {
 	switch (regs.int_no)
 	{

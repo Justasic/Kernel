@@ -24,11 +24,11 @@ static void callback(registers_t regs)
 // 	printf("Tick: %d\r", tick);
 }
 
-void init_PIT(uint32_t freq)
+void InitializePIT(uint32_t freq)
 {
 	printf("Initializing timer with %u Hz\n", freq);
 	// register our timer callback
-	register_interrupt_handler(IRQ0, &callback);
+	RegisterIRQHandler(IRQ0, &callback);
 	
 	// The value we send to the PIT is the value to divide it's input clock
 	// (1193180 Hz) by, to get our required frequency. Important to note is

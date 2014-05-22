@@ -35,7 +35,7 @@ page_directory_t *cur_directory = 0;
 // Current kernel heap
 extern heap_t *kheap;
 
-void initialize_paging(void)
+void InitializePaging(void)
 {
 	// The size of physical memory. For the moment we
 	// assume it is 16MB big.

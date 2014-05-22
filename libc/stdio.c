@@ -18,7 +18,7 @@
 #include "stdio.h"
 #include "string.h"
 #include "malloc.h"
-#include <tty/vga_terminal.h>
+#include <tty/terminal.h>
 // #include <lib/kmemory.h>
 
 // TODO: this is temporary to clear away some of the warnings
@@ -66,7 +66,7 @@ int printf(const char *fmt, ...)
 	// to basically start catting our kernel .text segment to the terminal
 	// (which is nice and all but we just wanted to say hello world..)
 	if (print_color)
-		print_color(str, ret, vga_color(COLOR_BLACK, COLOR_LIGHT_GREY));
+		print_color(str, ret, VGAColor(COLOR_BLACK, COLOR_LIGHT_GREY));
 	
 	return ret;
 // 	free(str);
@@ -102,7 +102,7 @@ int printcf(uint32_t color, const char *fmt, ...)
 	// to basically start catting our kernel .text segment to the terminal
 	// (which is nice and all but we just wanted to say hello world..)
 	if (print_color)
-// 		print_color(str, newlen, vga_color(COLOR_BLACK, COLOR_WHITE));
+// 		print_color(str, newlen, VGAColor(COLOR_BLACK, COLOR_WHITE));
 		print_color(str, ret, color);
 	
 	return ret;
@@ -205,7 +205,7 @@ int sprintf(char *str, const char *format, ...)
 
 int putc(int c)
 {
-	putch(c, vga_color(COLOR_BLACK, COLOR_LIGHT_GREY));
+	putch(c, VGAColor(COLOR_BLACK, COLOR_LIGHT_GREY));
 	return c;
 }
 

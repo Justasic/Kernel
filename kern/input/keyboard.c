@@ -78,5 +78,5 @@ void InitializeKeyboard(void)
 {
 	printf("Initizing keyboard.\n");
 	
-	register_interrupt_handler(IRQ1, &HandleKeyboardInput);
+	RegisterIRQHandler(IRQ1, &HandleKeyboardInput);
 }
