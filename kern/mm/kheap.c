@@ -278,7 +278,7 @@ void *halloc(uint32_t size, uint8_t page_align, heap_t *heap)
 		hole_header->is_hole  = true;
 		hole_header->size     = orig_hole_size - new_size;
 		
-		footer_t *hole_footer = (footer_t *) ( (uint32_t)hole_header + orig_hole_size - new_size - sizeof(footer_t) );
+		footer_t *hole_footer = (footer_t *)((uint32_t)hole_header + orig_hole_size - new_size - sizeof(footer_t));
 		if ((uint32_t)hole_footer < heap->end_address)
 		{
 			hole_footer->magic = HEAP_MAGIC;
