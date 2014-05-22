@@ -137,8 +137,12 @@ void kern_start(uint32_t esp)
 // 	__asm__ __volatile__("int $0x80" :: "a" (0x10));
 	
 	// Idle loop to make sure we don't leave
-	// the function and halt the CPU
-	while(true) ;
+	// the function and halt the CPU.
+	// The 'hlt' opcode is so the CPU stops until
+	// an event happens (notice we did not put 'sti'
+	// before the hlt instruction?)
+	while(true)
+		__asm__ __volatile__("hlt");
 }
 
 void kern_cleanup(void) 
