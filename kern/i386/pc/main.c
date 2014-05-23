@@ -129,8 +129,6 @@ void KernelStart(uint32_t esp)
 	printf("%s\n", str);
 	printf("Freeing string!\n");
 	kfree(str);
-	printf("use-after-free\n");
-	*str = 99;
 	
 	// If paging works correctly, this will call an
 	// syscall which kills the kernel via a panic
@@ -142,7 +140,21 @@ void KernelStart(uint32_t esp)
 	// an event happens (notice we did not put 'sti'
 	// before the hlt instruction?)
 	while(true)
+	{
+		CleanHeaps();
+		char *strs[10];
+		for (uint32_t i = 0; i < 10; ++i)
+		{
+			char *str = kalloc(1024);
+			char str2[] = "Really dirty memory block all over th eplace adsklfjhasdfjsahdfkjdaslfasdjkf\n\n\0asdkflj\radsf\0\r\n";
+			memcpy(str, str2, sizeof(str2));
+			strs[i] = str;
+		}
+		
+		for (uint32_t i = 0; i < 10; ++i)
+			kfree(strs[i]);
 		__asm__ __volatile__("hlt");
+	}
 }
 
 void KernelCleanup(void) 

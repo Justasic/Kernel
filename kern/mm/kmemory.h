@@ -25,6 +25,7 @@ extern void *kalloc_align_phys(size_t sz, uint32_t *phys);
 extern void *kalloc_align_phys_nowipe(size_t sz, uint32_t *phys);
 
 extern void kfree(void *p);
+extern void CleanHeaps(void);
 
 // Calculation functions
 extern uint32_t MemoryReduce(uint32_t bytes);

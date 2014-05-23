@@ -104,6 +104,12 @@ void kfree(void *p)
 	hfree(p, kheap);
 }
 
+// Idle function to clean the heaps that may be allocated.
+void CleanHeaps(void)
+{
+	HeapCleanHoles(kheap);
+}
+
 // This neat function reduces the memory size and applies the appropriate
 // suffix to it. This is useful for printing debug messages and such.
 uint32_t MemoryReduce(uint32_t bytes)

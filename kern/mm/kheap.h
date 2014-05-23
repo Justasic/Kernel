@@ -29,7 +29,8 @@
 typedef struct
 {
 	uint32_t magic;    // Magic number, used for error checking and identification.
-	bool is_hole;   // 1 if this is a hole. 0 if this is a block.
+	bool is_hole;      // 1 if this is a hole. 0 if this is a block.
+	bool is_clean;     // 1 if the hole was cleaned, 0 if it was not.
 	uint32_t size;     // size of the block, including the end footer.
 } header_t;
 
@@ -52,3 +53,4 @@ typedef struct
 extern void hfree(void *p, heap_t *heap);
 extern void *halloc(uint32_t size, uint8_t page_align, heap_t *heap);
 extern heap_t *CreateHeap(uint32_t start, uint32_t end_addr, uint32_t max, bool supervisor, bool readonly);
+extern void HeapCleanHoles(heap_t *heap);

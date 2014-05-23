@@ -157,6 +157,7 @@ heap_t *CreateHeap(uint32_t start, uint32_t end_addr, uint32_t max, bool supervi
 	hole->size          = end_addr - start;
 	hole->magic         = HEAP_MAGIC;
 	hole->is_hole       = true;
+	hole->is_clean      = false;
 	
 	InsertOrderedArray((void*)hole, &heap->index);     
 	
@@ -201,6 +202,7 @@ void *halloc(uint32_t size, uint8_t page_align, heap_t *heap)
 			header->magic = HEAP_MAGIC;
 			header->size = new_length - old_length;
 			header->is_hole = true;
+			header->is_clean = false;
 			
 			footer_t *footer = (footer_t *)(old_end_address + header->size - sizeof(footer_t));
 			
@@ -215,7 +217,7 @@ void *halloc(uint32_t size, uint8_t page_align, heap_t *heap)
 			header_t *header = LookupOrderedArray(idx, &heap->index);
 			header->size += new_length - old_length;
 			// Rewrite the footer.
-			footer_t *footer = (footer_t *) ( (uint32_t)header + header->size - sizeof(footer_t) );
+			footer_t *footer = (footer_t *)((uint32_t)header + header->size - sizeof(footer_t));
 			footer->header = header;
 			footer->magic = HEAP_MAGIC;
 		}
@@ -246,6 +248,7 @@ void *halloc(uint32_t size, uint8_t page_align, heap_t *heap)
 		hole_header->size     = PAGE_SIZE - (orig_hole_pos & 0xFFF) - sizeof(header_t);
 		hole_header->magic    = HEAP_MAGIC;
 		hole_header->is_hole  = true;
+		hole_header->is_clean      = false;
 		
 		footer_t *hole_footer = (footer_t *)((uint32_t)new_location - sizeof(footer_t));
 		hole_footer->magic    = HEAP_MAGIC;
@@ -261,6 +264,7 @@ void *halloc(uint32_t size, uint8_t page_align, heap_t *heap)
 	header_t *block_header  = (header_t *)orig_hole_pos;
 	block_header->magic     = HEAP_MAGIC;
 	block_header->is_hole   = false;
+	block_header->is_clean  = false;
 	block_header->size      = new_size;
 	
 	// ...And the footer
@@ -276,6 +280,7 @@ void *halloc(uint32_t size, uint8_t page_align, heap_t *heap)
 		
 		hole_header->magic    = HEAP_MAGIC;
 		hole_header->is_hole  = true;
+		hole_header->is_clean = false;
 		hole_header->size     = orig_hole_size - new_size;
 		
 		footer_t *hole_footer = (footer_t *)((uint32_t)hole_header + orig_hole_size - new_size - sizeof(footer_t));
@@ -312,6 +317,7 @@ void hfree(void *p, heap_t *heap)
 	
 	// Make us a hole.
 	header->is_hole = true;
+	header->is_clean = false;
 	
 	// Do we want to add this header into the 'free holes' index?
 	bool do_add = true;
@@ -384,4 +390,31 @@ void hfree(void *p, heap_t *heap)
 	if (do_add == true)
 		InsertOrderedArray((void*)header, &heap->index);
 	
+}
+
+#include <stdio.h>
+
+void HeapCleanHoles(heap_t *heap)
+{
+	// Lookup all heap objects.
+	for (uint32_t i = 0; i < heap->index.size; ++i)
+	{
+		header_t *head = LookupOrderedArray(i, &heap->index);
+		
+		// If we've found a hole that is not cleaned, clean it.
+		if (head->is_hole && !head->is_clean)
+		{
+			// Wipe the memory block
+			uint32_t *ptr = (void*)((uint32_t)head + sizeof(header_t));
+			
+			// While we don't hit the footer (or the end of the heap), clean the memory blocks.
+			while (*ptr != HEAP_MAGIC && (uint32_t)head <= heap->end_address)
+			{
+				*ptr = 0;
+				ptr++;
+			}
+			
+			head->is_clean = true;
+		}
+	}
 }
