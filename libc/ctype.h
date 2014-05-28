@@ -25,8 +25,8 @@
 #define isupper(c) (c >= 'A' && c <= 'Z')
 #define isgraph(c) (isprint(c) ? (!isspace(c)) : 0)
 
-#define toupper(c) (islower(c) ? c - ('a' + 'A') : c)
-#define tolower(c) (isupper(c) ? c + ('a' - 'A') : c)
+#define toupper(c) (islower(c) ? (c - 'a') + 'A' : c)
+#define tolower(c) (isupper(c) ? (c - 'A') + 'a' : c)
 
 #endif
 

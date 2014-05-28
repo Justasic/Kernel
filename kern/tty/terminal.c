@@ -16,6 +16,7 @@
 #include <string.h>
 #include "terminal.h"
 #include <lib/common.h>
+#include <ctype.h>
 
 // Video memory pointer - always constant
 static uint16_t *vidmem = (uint16_t *) 0xB8000;
@@ -100,7 +101,7 @@ void VGAPutc(char c, vga_color_t color)
 		row++;
 	}
 	// Handle any other printable character.
-	else if(c >= ' ')
+	else if(isprint(c))
 	{
 		location = vidmem + (row * VGA_WIDTH + column);
 		*location = c | (color << 8);
