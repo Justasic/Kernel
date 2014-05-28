@@ -20,6 +20,49 @@ over the hardware and how it operates.
 *AND BECAUSE I AM INSANE OF COURSE!*
 
 
+Current State
+=============
+
+This is just a small list of all the working and non-working things. See
+the TODO.txt file for what needs to be done (and will likely not be working).
+
+Working or completed
+---------------------
+
+ - Basic VGA Display - Completed
+  - Full VGA color terminal with printf-like functions
+  - Color logo prints to screen
+  - Printing string/characters different colors works
+
+ - Memory - Completed
+  - Paging works
+  - Basic heap allocations
+  - kalloc and kfree are available
+
+ - Keyboard - WIP
+  - Left and Right shift keys work
+  - caps lock key works
+  - caps lock + shift behavior works
+  - Upper and lower case prints to terminal
+  - Only prints to terminal, causes no other actions (yet)
+
+ - Fully working C environment
+
+Todo
+-----
+
+ - Multi-tasking - WIP
+ - Filesystems and disk access - WIP
+ - Getting length of memory installed in the system
+ - Booting in a bootloader other than grub2
+ - netbooting
+ - usermode
+ - syscalls
+ - real hardware testing
+ - other architectures (such as amd64 and arm)
+ - driver api
+
+
 Compiling
 =========
 

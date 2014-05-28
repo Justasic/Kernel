@@ -7,7 +7,9 @@ Required Implementations (in no order)
 - Long-Mode switching
 - Application recognition and execution
 - Filesystems
-- Device Drivers (kernel modules)
+ - Fat32 filesystem support
+ - NTFS filesystem support
+- Device Driver interface (kernel modules)
 - Keyboard input
 - Mouse input
 - CPU Identification and CPU specific configurations
