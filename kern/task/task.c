@@ -12,29 +12,4 @@
  * IN AN ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF OR IN
  * CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
  */
-#include <lib/common.h>
-#include <stdlib.h>
-#include <stdio.h>
-
-extern void InitializeGDT(void);
-extern void InitializeIDT(void);
-void InitializeDescriptorTables(void)
-{
-	printf("Installing Global Descriptor Table\n");
-	InitializeGDT();
-	printf("Installing Interrupt Descriptor Table\n");
-	InitializeIDT();
-}
-
-extern void IRQHandler(registers_t regs);
-extern void ISRHandler(registers_t regs);
-
-void CommonHandler(registers_t regs)
-{
-	// Because I use the interrupt handler for the same as the
-	// IRQ handler, we have to handle it here in C.
-	if (!regs.is_irq)
-		ISRHandler(regs);
-	else
-		IRQHandler(regs);
-}
+#include "task.h"

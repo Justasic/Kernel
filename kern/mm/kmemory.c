@@ -40,7 +40,7 @@ static void *kalloc_int(size_t sz, bool align, bool nowipe, uint32_t *phys)
 		if (phys)
 		{
 			page_t *page = GetPage((uint32_t)ptr, 0, kern_directory);
-			*phys = page->frame * PAGE_SIZE + (uint32_t)ptr & 0xFFF;
+			*phys = page->frame * PAGE_SIZE + ((uint32_t)ptr & 0xFFF);
 		}
 	}
 	else

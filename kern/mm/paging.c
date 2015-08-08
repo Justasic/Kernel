@@ -16,6 +16,7 @@
 #include "mm/frame.h"
 #include "mm/kmemory.h"
 #include "mm/kheap.h"
+#include "paging.h"
 #include <string.h>
 #include <stdio.h>
 
@@ -46,7 +47,7 @@ void InitializePaging(void)
 	
 	// Let's make a page directory.
 	kern_directory = kalloc_align(sizeof(page_directory_t));
-	cur_directory = kern_directory;
+	kern_directory->physicalAddr = (uint32_t)kern_directory->tablesPhysical;
 	
 	// Map some pages in the kernel heap area.
 	// Here we call GetPage but not AllocFrame. This causes page_table_t's 
@@ -72,18 +73,25 @@ void InitializePaging(void)
 	for (i = KHEAP_START; i < KHEAP_START + KHEAP_INITIAL_SIZE; i += PAGE_SIZE)
 		AllocFrame(GetPage(i, 1, kern_directory), 0, 0);
 
+	// Register our paging interrupt handler.
+	RegisterIRQHandler(PAGE_FAULT, ISRHandler);
+
 	// Now, enable paging!
 	SwitchPagingDirectory(kern_directory);
 	
-	// Initialise the kernel heap.
+	// Initialize the kernel heap.
 	kheap = CreateHeap(KHEAP_START, KHEAP_START + KHEAP_INITIAL_SIZE, 0xCFFFF000, 0, 0);
+	
+	// Clone the kernel directory
+	cur_directory = CloneDirectory(kern_directory);
+	SwitchPagingDirectory(cur_directory);
 }
 
 void SwitchPagingDirectory(page_directory_t *dir)
 {
 	cur_directory = dir;
 	uint32_t cr0;
-	__asm__ __volatile__("mov %0, %%cr3":: "r"(&dir->tablesPhysical));
+	__asm__ __volatile__("mov %0, %%cr3":: "r"(dir->physicalAddr));
 	__asm__ __volatile__("mov %%cr0, %0": "=r"(cr0));
 	cr0 |= 0x80000000; // Enable paging bit
 	__asm__ __volatile__("mov %0, %%cr0":: "r"(cr0));
@@ -94,6 +102,14 @@ void DisablePaging(void)
 	uint32_t cr0;
 	__asm__ __volatile__("mov %%cr0, %0": "=r"(cr0));
 	cr0 &= ~0x80000000; // Disable paging bit
+	__asm__ __volatile__("mov %0, %%cr0":: "r"(cr0));
+}
+
+void EnablePaging(void)
+{
+	uint32_t cr0;
+	__asm__ __volatile__("mov %%cr0, %0": "=r"(cr0));
+	cr0 |= 0x80000000; // Enable paging bit
 	__asm__ __volatile__("mov %0, %%cr0":: "r"(cr0));
 }
 
@@ -118,4 +134,78 @@ page_t *GetPage(uint32_t address, int make, page_directory_t *dir)
 	}
 	else
 		return 0;
-} 
+}
+
+static page_table_t *CloneTable(page_table_t *src, uint32_t *physAddr)
+{
+	// Make a new page table, which is page aligned.
+	page_table_t *table = kalloc_align_phys(sizeof(page_table_t), physAddr);
+	
+	// For every entry in the table...
+	for (int i = 0; i < 1024; i++)
+	{
+		// If the source entry has a frame associated with it...
+		if (src->pages[i].frame)
+		{
+			// Get a new frame.
+			AllocFrame(&table->pages[i], 0, 0);
+			// Clone the flags from source to destination.
+			if (src->pages[i].present)
+				table->pages[i].present = 1;
+			
+			if (src->pages[i].rw)
+				table->pages[i].rw = 1;
+			
+			if (src->pages[i].user)
+				table->pages[i].user = 1;
+			
+			if (src->pages[i].accessed)
+				table->pages[i].accessed = 1;
+			
+			if (src->pages[i].dirty)
+				table->pages[i].dirty = 1;
+			
+// 			printf("Cloning ")
+			// Physically copy the data across. This function is in kern/i386/paging.S.
+			ClonePhysicalPage(src->pages[i].frame * PAGE_SIZE, table->pages[i].frame * PAGE_SIZE);
+		}
+	}
+	return table;
+}
+
+page_directory_t *CloneDirectory(page_directory_t *src)
+{
+	uint32_t phys;
+	
+	// Make a new page directory and obtain its physical address
+	page_directory_t *dir = kalloc_align_phys(sizeof(page_directory_t), &phys);
+	
+	// Get the offset of tablesPhysical from the start of the page_directory_t structure.
+	uint32_t offset = (uint32_t)dir->tablesPhysical - (uint32_t)dir;
+	
+	// Then the physical address of dir->tablesPhysical is:
+	dir->physicalAddr = phys + offset;
+	
+	// Go through each page table. If the page table is in the kernel directory, do not make a new copy.
+	for (int i = 0; i < 1024; ++i)
+	{
+		if (!src->tables[i])
+			continue;
+		
+		if (kern_directory->tables[i] == src->tables[i])
+		{
+			// It's in the kernel, so just use the same pointer
+			dir->tables[i] = src->tables[i];
+			dir->tablesPhysical[i] = src->tablesPhysical[i];
+		}
+		else
+		{
+			// Copy the table.
+			uint32_t physaddr;
+			dir->tables[i] = CloneTable(src->tables[i], &physaddr);
+			dir->tablesPhysical[i] = physaddr | 0x07;
+		}
+	}
+	
+	return dir;
+}

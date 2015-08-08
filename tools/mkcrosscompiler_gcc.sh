@@ -8,8 +8,10 @@ if [ `whoami` != "root" ]; then
 	exit
 fi
 
-GCCURL="http://ftp.gnu.org/gnu/gcc/gcc-4.2.1/gcc-4.2.1.tar.bz2"
-BINUTILSURL="http://ftp.gnu.org/gnu/binutils/binutils-2.22.tar.gz"
+GCC_VER="4.9.0"
+BINUTILS_VER="2.24-4"
+GCCURL="http://ftp.gnu.org/gnu/gcc/gcc-$GCC_VER/gcc-$GCC_VER.tar.bz2"
+BINUTILSURL="http://ftp.gnu.org/gnu/binutils/binutils-$BINUTILS_VER.tar.gz"
 
 # By default this will install the cross compiler
 # and binutils to /usr/local/cross
@@ -21,7 +23,7 @@ TARGET="i586-elf"
 cd /usr/src
 mkdir build-binutils build-gcc
 
-echo "Downloading gcc 4.2.1... :)"
+echo "Downloading gcc $GCC_VER ... :)"
 wget $GCCURL
 echo "Done!  Now contacting the mothership..."
 sleep 3s
@@ -55,7 +57,7 @@ echo "Done installing gcc."
 
 ######################################################
 
-echo "Your environment should now have a working i586-elf cross compiler tool chain!"
+echo "Your environment should now have a working $TARGET  cross compiler tool chain!"
 echo 'But first, you need to do this:'
 echo '	export PATH=$PATH:/usr/local/cross/bin'
 echo " "

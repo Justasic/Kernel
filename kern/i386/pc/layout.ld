@@ -39,6 +39,21 @@ SECTIONS
 	.rodata BLOCK(4K) : ALIGN(4K)
 	{
 		*(.rodata)
+		/* Comment is defined by the compiler automatically
+		   The + 1 is because the string starts with a null
+		   character so we must iterate one byte past it.   */
+		comment = . + 1;
+		*(.comment)
+		
+		/* The string and symbol tables defined by the linker */
+		symtable = .;
+		*(.symtab)
+		/* Again, + 1 to iterate past null. */
+		strtable = . + 1;
+		*(.strtab)
+		/* Get the sizes of things */
+		strtablesz = strtable - .;
+		symtablesz = symtable - strtable;
 	}
 	
 	/* Read-write data (initialized) */

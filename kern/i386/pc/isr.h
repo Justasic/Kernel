@@ -18,6 +18,29 @@
 
 enum
 {
+	DIVISION_BY_ZERO,          // Division by zero exception
+	DEBUG_EXCEPTION,           // Debug exception
+	NON_MASKABLE_INTERRUPT,    // Non-maskable interrupt
+	BREAKPOINT_EXCEPTION,      // Breakpoint exception
+	INTRO_DETECTION,           // 'Intro detected overflow'
+	OUT_OF_BOUNDS_EXCEPTION,   // Out of bounds exception
+	INVALID_OPCODE,            // Invalid opcode exception
+	NO_COPROCESSOR,            // No coprocessor exception
+	DOUBLE_FAULT,              // Double fault (w/ error code)
+	COPROCESSOR_SEGMENT_OVERRUN,// Coprocessor segment overrun
+	BAD_TSS,                   // Bad TSS (w/ error code)
+	SEGMENT_NOT_PRESENT,       // Segment not present (w/ error code)
+	STACK_FAULT,               // Stack Fault (w/ error code)
+	GENERAL_PROTECTION,        // General protection fault (w/ error code)
+	PAGE_FAULT,                // Page fault (w/ error code)
+	UNKNOWN_INTERRUPT,         // Unknown interrupt exception
+	COPROCESSOR_FAULT,         // Coprocessor fault
+	ALIGNMENT_CHECK,           // Alignment check exception
+	MACHINE_CHECK              // Machine check exception
+};
+
+enum
+{
 	IRQ0 = 32,
 	IRQ1,
 	IRQ2,
@@ -37,6 +60,7 @@ enum
 };
 
 typedef void (*isr_t)(registers_t);
-void RegisterIRQHandler(uint8_t n, isr_t handler);
+extern void RegisterIRQHandler(uint8_t n, isr_t handler);
+extern void ISRHandler(registers_t regs);
 
 #endif // __KISR_H__

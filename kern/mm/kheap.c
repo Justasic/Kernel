@@ -392,8 +392,6 @@ void hfree(void *p, heap_t *heap)
 	
 }
 
-#include <stdio.h>
-
 void HeapCleanHoles(heap_t *heap)
 {
 	// Lookup all heap objects.

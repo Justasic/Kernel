@@ -93,5 +93,7 @@ enum cpuid_requests
 extern char *GetCPUVendor(void);
 extern uint8_t CPUSupportsFeature(uint32_t featureid);
 extern uint8_t CPUSupportsFeatureExt(uint32_t featureid);
+extern bool CPUSupportsCPUID(void);
+extern void GetCPUInfo(void);
 
 #endif // __KCPUID_H__

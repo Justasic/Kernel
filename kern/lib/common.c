@@ -39,5 +39,5 @@ void sleep(uint32_t secs)
 	extern uint32_t tick;
 	uint32_t nexttick = tick + (secs * 100);
 	while (tick < nexttick)
-		__asm__ __volatile__("pause");
+		__asm__ __volatile__("hlt");
 }

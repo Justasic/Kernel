@@ -66,5 +66,13 @@ extern page_t *GetPage(uint32_t address, int make, page_directory_t *dir);
 
 // Disables paging so we can do things which may cause page faults but are considered valid
 extern void DisablePaging(void);
+// Enables paging if we disabled it previously
+extern void EnablePaging(void);
+
+// Clone a paging directory
+extern page_directory_t *CloneDirectory(page_directory_t *src);
+
+// Clone a page - Defined in kern/i386/pc/paging.s
+extern void ClonePhysicalPage(uint32_t _srcaddr, uint32_t _destaddr);
 
 #endif // __KPAGING_H__

@@ -2,9 +2,9 @@
  * Copyright (c) 2013, Alyx Wolcott <contact@alyxw.me>
  * Copyright (c) 2013 - 2014, Justin Crawford <Justasic@gmail.com>
  * Copyright (c) 2013, Piero Barbagelata <lordofsraam@hotmail.com>
- * 
+ *
  * Permission to use, copy, modify, and/or distribute this software for any purpose
- * with or without fee is hereby granted, provided that the above copyright notice 
+ * with or without fee is hereby granted, provided that the above copyright notice
  * and this permission notice appear in all copies.
  *
  * THE SOFTWARE IS PROVIDED "AS IS" AND THE AUTHOR DISCLAIMS ALL WARRANTIES WITH REGARD TO
@@ -58,6 +58,9 @@ stack_top:
 .type _bootstrap, @function
 _bootstrap:
 	# Welcome to kernel mode!
+	# Currently, we're in protected mode if this is compiled as an ELF binary
+	#. If we're not an elf binary then we must initialize from Real Mode to
+	# protected mode and then jump to C, otherwise C is rather useless.
 
 	# C requires a stack to work on so allocate a small one
 	# to start with and point it to the top.
@@ -65,13 +68,14 @@ _bootstrap:
 	# more memory)
 	movl $stack_top, %esp
 	push %esp
+	push %ebx
 
 	# Jump to C! :D
 	call KernelStart
-	
+
 	# Clean up the stack for the next call
 	addl $8, %esp
-	
+
 	# Cleanup after the kernel is ready to leave.
 	call KernelCleanup
 

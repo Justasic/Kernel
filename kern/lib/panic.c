@@ -21,6 +21,49 @@
 #include <stdarg.h>
 #include <tty/terminal.h>
 
+
+// According to the ELF format, these structs should define
+// the string and symbol table entries
+/* Sizes of both the string table and the symbol table*/
+extern uint32_t symtablesz;
+extern uint32_t strtablesz;
+/* The actual string and symbol tables */
+extern uint32_t strtable;
+extern uint32_t symtable;
+
+// Elf symbol table symbol structure
+typedef struct {
+	uint32_t st_name;  // Index of symbol name in string table
+	uint32_t st_value; // Value of the symbol
+	uint32_t st_size;  // Associated symbol size
+	uint8_t  st_info;  // Type and binding info
+	uint8_t  st_other; // no defined meaning, 0
+	uint16_t st_shndx; // ?
+} ELF32_sym;
+
+void IterateSymbols(void)
+{
+	// Make the symtable and strtable accessable in C as pointers
+	const char **strtab = (const char **)&strtable;
+	const ELF32_sym *symtab = (ELF32_sym*)&symtable;
+	
+	
+	printf("String: %s\n", strtab[0]);
+// 	ELF32_sym *cursym = symtable;
+// 	uint32_t sz = symtablesz;
+// 	while (sz)
+// 	{
+// 		// print the symbol name
+// 		printf("symbol: %s\n", strtable[cursym->st_name]);
+// 		// next symbol
+// 		cursym++;
+// 		
+// 		// Break from the loop if we hit the end of the table
+// 		sz -= sizeof(ELF32_sym);
+// 	}
+}
+
+
 // Color to differ the message from the other text.
 const vga_color_t color = VGAColor(COLOR_BLACK, COLOR_WHITE);
 
