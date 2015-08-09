@@ -38,6 +38,14 @@ Working or completed
   - Paging works
   - Basic heap allocations
   - kalloc and kfree are available
+  - Everything is ready for Multi-tasking and scheduling of user space processes.
+  - Need to get length of memory, not sure how to go about this yet
+    currently it allocates until a CPU exception happens.
+
+ - Disk - WIP
+  - Some code for PATA has been written
+  - kernel otherwise has no clue what a hard drive is
+  - FAT32 support with MBR/GPT planned.
 
  - Keyboard - WIP
   - Left and Right shift keys work
@@ -46,18 +54,24 @@ Working or completed
   - Upper and lower case prints to terminal
   - Only prints to terminal, causes no other actions (yet)
 
+ - Time - Completed
+  - Gets the current CMOS time
+  - Continues counting seconds from Unix EPOCH
+  - localtime_r() and similar functions calculate off my timezone (UTC+7)
+    so timezones are incomplete.
+
+ - Multi-tasking and Userland! - WIP
+  - Memory management in place for user processes
+  - Some syscall stuff has been made
+
  - Fully working C environment
 
 Todo
 -----
 
- - Multi-tasking - WIP
- - Filesystems and disk access - WIP
  - Getting length of memory installed in the system
  - Booting in a bootloader other than grub2
  - netbooting
- - usermode
- - syscalls
  - real hardware testing
  - other architectures (such as amd64 and arm)
  - driver api

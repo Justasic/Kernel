@@ -130,9 +130,6 @@ void KernelStart(multiboot_t *mboot, uint32_t esp)
 	// Get the system time
 	InitializeTime();
 
-	// Test our interrupt
-// 	__asm__ __volatile__("int $0x80" :: "a" (0x10));
-
 	printf("Sleep before test\n");
 	// Sleep for a bit
 	sleep(2);
