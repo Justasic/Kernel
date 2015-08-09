@@ -15,3 +15,4 @@
 
 #include <stdint.h>
 extern void InitializePIT(uint32_t freq);
+extern void InitializeTime();

@@ -17,11 +17,13 @@
 #include <string.h>
 #include <stdlib.h>
 #include <stddef.h>
+#include <time.h>
 
 #include "lib/panic.h"
 #include "lib/common.h"
 #include "mm/kmemory.h"
 #include "mm/paging.h"
+
 // #include "lib/linux.h"
 #include "tty/terminal.h"
 #include "input/keyboard.h"
@@ -125,24 +127,32 @@ void KernelStart(multiboot_t *mboot, uint32_t esp)
 	// Make sure we reenable interrupts.
 	ExitCriticalSection();
 
+	// Get the system time
+	InitializeTime();
+
 	// Test our interrupt
 // 	__asm__ __volatile__("int $0x80" :: "a" (0x10));
 
 	printf("Sleep before test\n");
 	// Sleep for a bit
-	sleep(4);
+	sleep(2);
 
 	printf("Done waiting!\n");
 
-	char *str = kalloc(300);
-	sleep(2);
-	strcpy(str, "Test kalloc!");
-	sleep(2);
-	printf("%s\n", str);
-	sleep(2);
-	printf("Freeing string!\n");
-	sleep(2);
-	kfree(str);
+	// Print the time:
+	char *timestr = kalloc(500);
+	struct tm tm, tm2;
+	time_t t = time(NULL);
+
+	gmtime_r(&t, &tm2);
+	strftime(timestr, 500, NULL, &tm2);
+	printf("Current CMOS time: %s\n", timestr);
+	explicit_bzero(timestr, 500);
+
+	localtime_r(&t, &tm);
+	strftime(timestr, 500, NULL, &tm);
+	printf("Current local time is: %s\n", timestr);
+	kfree(timestr);
 
 	/*printf("Page fault.\n");
 	int *ptr = 0x12123123;

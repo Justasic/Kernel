@@ -13,14 +13,51 @@
  * CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
  */
 #include <stdio.h>
+#include <stdint.h>
+#include <time.h>
+#include <stddef.h>
 #include "lib/common.h"
+#include "cmos/cmos.h"
 #include "i386/pc/isr.h"
 
+// This variable stores the UNIX EPOCH time.
+extern time_t SystemTime;
 uint32_t tick = 0;
+
+
+void InitializeTime()
+{
+	// Wait for RTC to give us the time
+	printf("Initializing system time\n");
+	while(CMOSUpdate());
+	SystemTime = GetCMOSTime();
+	printf("System time initialized: %llu\n", SystemTime);
+}
 
 static void callback(registers_t regs)
 {
+	// Update system ticks
 	tick++;
+
+	// Update the time.
+	if ((tick % 100) == 0 || SystemTime == 0)
+	{
+		if (CMOSUpdate())
+		{
+			// Update the system time variable.
+			time_t cmosTime = GetCMOSTime();
+			if (SystemTime > cmosTime || SystemTime < cmosTime)
+				SystemTime = cmosTime;
+		}
+		else
+		{
+			// Tick by ourselves, we'll sync with the RTC eventually.
+			// Except when we first initialize, we MUST have the CMOS time.
+			if (SystemTime)
+				SystemTime++;
+		}
+	}
+
 // 	printf("Tick: %d\r", tick);
 }
 
